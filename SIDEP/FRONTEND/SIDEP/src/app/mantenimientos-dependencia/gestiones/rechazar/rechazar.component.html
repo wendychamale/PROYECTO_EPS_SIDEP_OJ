@@ -1,0 +1,81 @@
+<!--<style>
+  html,
+  .slide {
+    background-color: #3c8dbc;
+    color: #17384C;
+    height: 100%;
+  }
+
+  .titulo {
+    text-align: center;
+    font-size: 24px;
+    background-color: #215074;
+    height: 40px;
+    font-weight: 400;
+    color: white;
+    padding: 1%;
+  }
+
+  .etiqueta {
+    color: black;
+    font-weight: 401;
+  }
+
+  .textos {
+    color: black;
+    font-size: 14px;
+  }
+  summary::-webkit-details-marker {
+  color: #215074;
+  }
+  summary:focus {
+  outline-style: none;
+  }      
+  
+</style> -->
+<div class="titulo">
+  <p>
+    Rechazar Solicitud
+  </p>
+</div>
+<br>
+<details *ngIf="valTipo">
+  <summary class="etiqueta">Dependencia Referencia <i class="fa fa-building-o"></i></summary>
+  <div style="border: 2px solid #215074; padding-left: 1px; padding-right: 1px; padding-top: 1px; margin-bottom: 10px; font-size: 12px; border-radius: 5px; ">
+    <div class="form-group" style="padding-left: 5px; padding-right: 5px;">
+      <label class="etiqueta">Código Dependencia: </label>
+      <mat-form-field color="warn" class="textos">
+        <input matInput [(ngModel)]="codDepRef" class="textos" type="text" readonly>
+      </mat-form-field>
+    </div>
+    <div class="form-group" style="padding-left: 5px; padding-right: 5px;">
+      <label class="etiqueta">Nombre: </label>
+      <mat-form-field color="warn" class="textos">
+        <input matInput [(ngModel)]="dependenciaRef" class="textos" type="text" readonly>
+      </mat-form-field>
+    </div>
+  </div>
+</details>
+<div mat-dialog-content>
+  <label class="textos">Código Dependencia </label> &nbsp;
+  <label class="etiqueta"> {{data.CODIGO_DEPENDENCIA}}</label>
+  <br>
+  <label class="textos">Nombre Dependencia </label> &nbsp;
+  <label class="etiqueta">{{data.NOMBRE_DEPENDENCIA}}</label>
+  <br>
+  <label class="textos">Gestión realizada por </label> &nbsp;
+  <label class="etiqueta"> {{data.NOMBRE}}</label>
+  <br>
+  <br>
+  <form [formGroup]="rechazar" name="formRechazar" class="register-form">
+    <mat-form-field style="font-size: 14px;">
+      <mat-label>Observaciones</mat-label>
+      <textarea matInput color="primary" formControlName="observaciones" rows="2"></textarea>
+      <mat-hint align="end">{{f.observaciones.value.length}} / 2048</mat-hint>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions style="text-align: right;">
+  <button mat-button class="btn btn-primary" (click)="retornar()" [disabled]="rechazar.invalid" cdkFocusInitial style="font-size: 12px;">Aceptar</button>
+  <button mat-button class="btn btn-danger" (click)="onNoClick()" style="font-size: 12px;">Cancelar</button>
+</div>
