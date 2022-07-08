@@ -1,0 +1,284 @@
+<div class="wraper">
+	<header class="main-header">
+	  <!-- Logo -->
+	  <a href="./#/" class="logo">
+	    <!-- mini logo for sidebar mini 50x50 pixels -->
+	    <span class="logo-mini"><b>CIT</b></span>
+	    <!-- logo for regular state and mobile devices -->
+	    <span class="logo-lg"><b>CIT</b> <img src="img/LogoOJ-PII.png"></span>
+	  </a>
+	  <!-- Header Navbar: style can be found in header.less -->
+	  <nav class="navbar navbar-static-top" role="navigation">
+	    <!-- Sidebar toggle button-->
+	    <a href="javascript:void(0)" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+	      <span class="sr-only">Toggle navigation</span>
+	    </a>
+	   	<i class="fa fa-bank" style="color: #ffffff"></i><span class="navbar-title"> &nbsp; Proyecto Base del CIT </span>
+	    <div class="navbar-custom-menu">
+	      <ul class="nav navbar-nav">
+	        <!-- quemado-->
+<!-- 	        <li class="" >
+	          <a  href='#'>
+	            <i class="fa fa-envelope-o"></i>
+	          </a>
+	        </li> -->
+
+	        <!-- dinamicamente -->
+			<li ng-repeat="menu in loginData.MENU_ENCABEZADO">
+				<a href="{{ menu.URL_MENU }}" target="_blank" ng-show="menu.URL_MENU.indexOf('https//')">
+					<i class="{{ menu.ICONO }} {{ menu.COLOR }}"></i>
+				</a>
+				<a ui-sref="{{ menu.URL_MENU }}" ng-hide="menu.URL_MENU.indexOf('https//')">
+					<i class="{{ menu.ICONO }} {{ menu.COLOR }}"></i>
+				</a>
+			</li>
+
+
+
+
+	        <!-- Notifications: style can be found in dropdown.less -->
+
+	        <!-- Tasks: style can be found in dropdown.less -->
+
+	        <!-- User Account: style can be found in dropdown.less -->
+	        <li class="dropdown user user-menu">
+	          <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+	            <img data-ng-src="data:image/png;base64,{{loginData.FOTO}}" class="user-image" alt="User Image">
+	            <span class="hidden-xs">{{loginData.USUARIO}}</span>
+
+	          </a>
+	          <ul class="dropdown-menu">
+	            <!-- User image -->
+	            <li class="user-header">
+	              <img data-ng-src="data:image/png;base64,{{loginData.FOTO}}" class="img-circle" alt="User Image">
+	              <p>
+	                {{loginData.NOMBRE}}
+	                <small>{{loginData.CORREO}} </small>
+	              </p>
+	            </li>
+	            <!-- Menu Body -->
+	            <!-- <li class="user-body"></li> -->
+	            <!-- Menu Footer-->
+	            <li class="user-footer">
+	              <!-- div class="pull-left">
+	                <a href="javascript:void(0)" class="btn btn-default btn-flat">Perfil</a>
+	              </div> -->
+	              <div class="pull-right">
+	                <a href="javascript:void(0)" class="btn btn-default btn-flat" ng-click="logout()">Cerrar sesi&oacute;n</a>
+	              </div>
+	            </li>
+	          </ul>
+	        </li>
+	        <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+          </li>
+	      </ul>
+	    </div>
+	  </nav>
+	</header>
+	<!-- Left side column. contains the logo and sidebar -->
+	<aside class="main-sidebar">
+	  <!-- sidebar: style can be found in sidebar.less -->
+	  <section class="sidebar">
+	    <!-- Sidebar user panel -->
+
+	    <!-- search form
+      <form name="form" class="sidebar-form" ng-submit="submitFormSearch(form.$valid)" autocomplete="on" novalidate>
+        <div class="input-group">
+        <input type="text" class="form-control" placeholder="Buscar Expediente" name="query" ng-model="query" ng-pattern="/^\d{1,5}\-\d{4}\-\d{1,5}(?:-[R,I,r,i]\d{1,5})?($|\/)/" required>
+          <span class="input-group-btn">
+            <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+          </span>
+        </div>
+      </form> -->
+      <!-- /.search form -->
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      	<ul class="sidebar-menu" data-widget="tree">
+
+		    <li class="header">
+				Centro de Informatica y Telecomunicaciones
+			</li>
+			<!--
+			  <li class="treeview">
+				<a href="javascript:void(0)">
+	          		<i class="fa fa-list-alt"></i> <span>Menú Quemado</span> <i class="fa fa-angle-left pull-right"></i>
+	        	</a>
+				<ul class="treeview-menu">
+	                <li ><a ui-sref="index.dashboard.list()"  ><i class="fa fa-circle-o text-orange"></i> Dashboard</a></li>
+	            </ul>
+	            <ul class="treeview-menu">
+                	<li ><a ui-sref="index.expediente.add()"  ><i class="fa fa-circle-o text-green"></i> Ingreso</a></li>
+              	</ul>
+	        </li> -->
+
+
+<!-- 	        <li ng-repeat="menu in loginData.MENU_PRINCIPAl" ng-class="{ active: $state.includes( '{{ menu.URL_MENU }}' ) }">
+				<a href="{{ menu.URL_MENU }}" target="_blank" ng-show="menu.URL_MENU.indexOf('https//')">
+					<i class="{{ menu.ICONO }} {{ menu.COLOR }}"></i>
+					{{ menu.ABREVIACION }}
+				</a>
+				<a ui-sref="{{ menu.URL_MENU }}" ui-sref-opts="{reload: false}" ng-hide="menu.URL_MENU.indexOf('https//')">
+					<i class="{{ menu.ICONO }} {{ menu.COLOR }}"></i>
+					{{ menu.ABREVIACION }}
+				</a>
+			</li> -->
+
+	        <li class="treeview" ng-show="loginData.MENU_PRINCIPAl[0]" >
+			    <a href="javascript:void(0)">
+			        <i class="{{loginData.MENU_PRINCIPAl[0].ICONO}} {{loginData.MENU_PRINCIPAl[0].COLOR}}"></i><span> {{loginData.MENU_PRINCIPAl[0].ABREVIACION}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in loginData.MENU_PRINCIPAl[0].hijos" ng-class="{ active: $state.includes( '{{ item.URL_MENU }}' ) }"><a ui-sref="{{ item.URL_MENU }}()" ui-sref-opts="{reload: false}"><i class="{{ item.ICONO }} {{ item.COLOR }}"></i>{{ item.ABREVIACION }}</a></li>
+
+			    </ul>
+			</li>
+
+			<li class="treeview" ng-show="loginData.MENU_PRINCIPAl[1]" >
+			    <a href="javascript:void(0)">
+			        <i class="{{loginData.MENU_PRINCIPAl[1].ICONO}} {{loginData.MENU_PRINCIPAl[1].COLOR}}"></i><span> {{loginData.MENU_PRINCIPAl[1].ABREVIACION}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in loginData.MENU_PRINCIPAl[1].hijos" ng-class="{ active: $state.includes( '{{ item.URL_MENU }}' ) }"><a ui-sref="{{ item.URL_MENU }}()" ui-sref-opts="{reload: false}"><i class="{{ item.ICONO }} {{ item.COLOR }}"></i>{{ item.ABREVIACION }}</a></li>
+
+			    </ul>
+			</li>
+
+			<li class="treeview" ng-show="loginData.MENU_PRINCIPAl[2]" >
+			    <a href="javascript:void(0)">
+			        <i class="{{loginData.MENU_PRINCIPAl[2].ICONO}} {{loginData.MENU_PRINCIPAl[2].COLOR}}"></i><span> {{loginData.MENU_PRINCIPAl[2].ABREVIACION}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in loginData.MENU_PRINCIPAl[2].hijos" ng-class="{ active: $state.includes( '{{ item.URL_MENU }}' ) }"><a ui-sref="{{ item.URL_MENU }}()" ui-sref-opts="{reload: false}"><i class="{{ item.ICONO }} {{ item.COLOR }}"></i>{{ item.ABREVIACION }}</a></li>
+
+			    </ul>
+			</li>
+
+			<li class="treeview" ng-show="loginData.MENU_PRINCIPAl[3]" >
+			    <a href="javascript:void(0)">
+			        <i class="{{loginData.MENU_PRINCIPAl[3].ICONO}} {{loginData.MENU_PRINCIPAl[3].COLOR}}"></i><span> {{loginData.MENU_PRINCIPAl[3].ABREVIACION}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in loginData.MENU_PRINCIPAl[3].hijos" ng-class="{ active: $state.includes( '{{ item.URL_MENU }}' ) }"><a ui-sref="{{ item.URL_MENU }}()" ui-sref-opts="{reload: false}"><i class="{{ item.ICONO }} {{ item.COLOR }}"></i>{{ item.ABREVIACION }}</a></li>
+
+			    </ul>
+			</li>
+
+<!--
+			<li class="treeview" ng-hide="getDataMenu(-1).length<=0" >
+			    <a href="javascript:void(0)">
+			        <i class="{{getIconoMenu(-1)}} {{getColorMenu(-1)}}"></i><span> {{getNombreMenu(-1)}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in getDataMenu(-1)" ng-class="{ active: $state.includes( '{{ item.url }}' ) }"><a ui-sref="{{ item.url }}()" ui-sref-opts="{reload: false}"><i class="{{ item.icono }} {{ item.color }}"></i>{{ item.nombreCorto }}</a></li>
+
+			    </ul>
+			</li>
+			<li class="treeview" ng-hide="getDataMenu(-2).length<=0" >
+			    <a href="javascript:void(0)">
+			        <i class="{{getIconoMenu(-2)}} {{getColorMenu(-2)}}"></i><span> {{getNombreMenu(-2)}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in getDataMenu(-2)" ng-class="{ active: $state.includes( '{{ item.url }}' ) }"><a ui-sref="{{ item.url }}()" ui-sref-opts="{reload: false}"><i class="{{ item.icono }} {{ item.color }}"></i>{{ item.nombreCorto }}</a></li>
+			    </ul>
+			</li>
+			<li class="treeview" ng-hide="getDataMenu(-3).length<=0" >
+			    <a href="javascript:void(0)">
+			        <i class="{{getIconoMenu(-3)}} {{getColorMenu(-3)}}"></i><span> {{getNombreMenu(-3)}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in getDataMenu(-3)" ng-class="{ active: $state.includes( '{{ item.url }}' ) }"><a ui-sref="{{ item.url }}()" ui-sref-opts="{reload: false}"><i class="{{ item.icono }} {{ item.color }}"></i>{{ item.nombreCorto }}</a></li>
+			    </ul>
+			</li>
+			<li class="treeview" ng-hide="getDataMenu(-4).length<=0" >
+			    <a href="javascript:void(0)">
+			        <i class="{{getIconoMenu(-4)}} {{getColorMenu(-4)}}"></i><span> {{getNombreMenu(-4)}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in getDataMenu(-4)" ng-class="{ active: $state.includes( '{{ item.url }}' ) }"><a ui-sref="{{ item.url }}()" ui-sref-opts="{reload: false}"><i class="{{ item.icono }} {{ item.color }}"></i>{{ item.nombreCorto }}</a></li>
+			    </ul>
+			</li>
+
+			<li class="treeview" ng-hide="getDataMenu(-5).length<=0" >
+			    <a href="javascript:void(0)">
+			        <i class="{{getIconoMenu(-5)}} {{getColorMenu(-5)}}"></i><span> {{getNombreMenu(-5)}} </span> <i class="fa fa-angle-left pull-right"></i>
+			    </a>
+			    <ul class="treeview-menu">
+					<li ng-repeat="item in getDataMenu(-5)" ng-class="{ active: $state.includes( '{{ item.url }}' ) }"><a ui-sref="{{ item.url }}()" ui-sref-opts="{reload: false}"><i class="{{ item.icono }} {{ item.color }}"></i>{{ item.nombreCorto }}</a></li>
+			    </ul>
+			</li> -->
+
+
+		</ul>
+
+
+
+
+	</section>
+	  <!-- /.sidebar -->
+	</aside>
+
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+	  <!-- Content Header (Page header) -->
+	  <section class="content-header" ui-view="hint">
+	    <!-- <ol class="breadcrumb">
+	      <li><a href="javascript:void(0)"><i class="fa fa-dashboard"></i> Home</a></li>
+	      <li class="active">Dashboard</li>
+	    </ol> -->
+	  </section>
+
+	  <!-- Main content -->
+	  <section class="content">
+	    <!-- Here is the main ui-view (unnamed) and will be populated by its immediate children's templates
+	         unless otherwise explicitly named views are targeted. -->
+	    <div ui-view class="slide"></div>
+	  </section><!-- /.content -->
+	</div><!-- /.content-wrapper -->
+	<footer class="main-footer">
+	  <div class="pull-right hidden-xs"></div>
+	  <strong>Version: {{loginData.SISTEMA.VERSION_SISTEMA}}</strong>
+	</footer>
+
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<h3 class="control-sidebar-heading text-center">Herramientas</h3>
+        <ul class="control-sidebar-menu">
+        	<li ng-repeat="menu in loginData.MENU_SECUNDARIO">
+            <a href="{{ menu.URL_MENU }}" target="_blank" ng-show="menu.URL_MENU.indexOf('https//')">
+              <i class="menu-icon fa {{ menu.ICONO }} bg-blue"></i>
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">{{ menu.ABREVIACION }}</h4>
+
+                <p>{{ menu.MENU }}</p>
+              </div>
+            </a>
+            <a ui-sref="{{ menu.URL_MENU }}" ui-sref-opts="{reload: false}" ng-hide="menu.URL_MENU.indexOf('https//')">
+              <i class="menu-icon fa {{ menu.ICONO }} bg-blue"></i>
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">{{ menu.ABREVIACION }}</h4>
+
+                <p>{{ menu.MENU }}</p>
+              </div>
+            </a>
+          </li>
+		</ul>
+
+		<h3 class="control-sidebar-heading text-center">Otros Sistemas</h3>
+        <ul class="control-sidebar-menu">
+        	<li ng-repeat="menu in loginData.SISTEMAS">
+            <a href="{{ menu.URL }}" target="_blank">
+              <i class="menu-icon fa {{ menu.LOGOTIPO }} bg-red"></i>
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">{{ menu.ABREVIACION }}</h4>
+
+                <p>{{ menu.SISTEMA }}</p>
+              </div>
+            </a>
+          </li>
+		</ul>
+	</aside>
+
+  <!-- Add the sidebar's background. This div must be placed
+       immediately after the control sidebar -->
+  <div class='control-sidebar-bg'></div>
+</div><!-- ./wrapper -->
