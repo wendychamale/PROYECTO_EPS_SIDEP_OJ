@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<configuration>
+<!--desarrollo-->
+
+<!--<sistema>
+	<nombre>SIDEP</nombre>
+</sistema>
+<db>
+  	<host>ORA_DESACIT01</host>
+  	<port>1521</port>
+  	<service>DESACIT01</service>
+  	<user>RRHH</user>
+  	<pass>RRHH</pass>
+  	<schema>RRHH</schema>
+  	<version>1.0.0.0</version>
+ </db>
+ <archivo>
+	<ruta>G:/</ruta>
+	<tipo>Windows</tipo>
+	<carpeta>SIDEP/</carpeta>
+</archivo>
+<configuracionAmbiente>
+	<mensajesDebug>1</mensajesDebug>
+ </configuracionAmbiente>
+ <tipo_proceso>
+ 	<creacion>1</creacion>
+ 	<modificacion>2</modificacion>
+ 	<regularizacion>3</regularizacion>
+ 	<baja>4</baja>
+ </tipo_proceso>-->
+
+<!--  prueb-->
+
+<sistema>
+	<nombre>SIDEP</nombre> 
+</sistema> 
+<db> 
+  	<host>ORA_DESACIT01</host> 
+  	<port>1521</port> 
+  	<service>DESACIT01</service> 
+  	<user>RRHH</user> 
+  	<pass>RRHH</pass> 
+  	<schema>RRHH</schema> 
+  	<version>1.0.0.0</version> 
+ </db> 
+ <archivo> 
+	<ruta>D:/</ruta> 
+	<tipo>Windows</tipo> 
+	<carpeta>AGT_FILES/SIDEP/</carpeta> 
+</archivo> 
+<configuracionAmbiente> 
+	<mensajesDebug>1</mensajesDebug> 
+ </configuracionAmbiente> 
+ <tipo_proceso> 
+ 	<creacion>1</creacion> 
+ 	<modificacion>2</modificacion> 
+ 	<regularizacion>3</regularizacion> 
+ 	<baja>4</baja> 
+ </tipo_proceso> 
+
+<!--  produccion -->
+<!--  <sistema> -->
+<!-- 	<nombre>SIDEP</nombre> -->
+<!-- </sistema> -->
+<!-- <db> -->
+<!--   	<host>ORA_DESACIT01</host> -->
+<!--   	<port>1521</port> -->
+<!--   	<service>DESACIT01</service> -->
+<!--   	<user>RRHH</user> -->
+<!--   	<pass>RRHH</pass> -->
+<!--   	<schema>RRHH</schema> -->
+<!--   	<version>1.0.0.0</version> -->
+<!--  </db> -->
+<!--  <archivo> -->
+<!-- 	<ruta>G:/</ruta> -->
+<!-- 	<tipo>Windows</tipo> -->
+<!-- 	<carpeta>SIDEP/</carpeta> -->
+<!-- </archivo> -->
+<!-- <configuracionAmbiente> -->
+<!-- 	<mensajesDebug>1</mensajesDebug> -->
+<!--  </configuracionAmbiente> -->
+<!--  <tipo_proceso> -->
+<!--  	<creacion>1</creacion> -->
+<!--  	<modificacion>2</modificacion> -->
+<!--  	<regularizacion>3</regularizacion> -->
+<!--  	<baja>4</baja> -->
+<!--  </tipo_proceso> -->
+</configuration>

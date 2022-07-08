@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<configuration>
+<sistema>
+	<nombre>OJ</nombre>
+</sistema>
+<db>
+  	<host>ORA_DESACIT01</host>
+  	<port>1521</port>
+  	<service>DESACIT01</service>
+  	<user>CIT_BASE</user>
+  	<pass>CIT_BASE</pass>
+  	<schema>CIT_BASE</schema>
+  	<version>1.0.0.0</version>
+ </db>
+ 
+</configuration>
