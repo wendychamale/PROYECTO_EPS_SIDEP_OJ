@@ -54,6 +54,7 @@ export class MantenimientosDependenciaService {
   }
 
   getGestiones(idEstado, idTipo): Observable<any> {
+    console.log('consultamos a ver dependencia'+this.appSettings.restApiServiceBaseUri + 'Dependencia/getProceso/' + idEstado + '/getTipo/' + idTipo);
     return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'Dependencia/getProceso/' + idEstado + '/getTipo/' + idTipo)
       .pipe(
         catchError(this.handleError('getGestDependencia', []))

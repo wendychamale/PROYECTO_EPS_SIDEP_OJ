@@ -41,8 +41,13 @@ export class GestionesComponent implements OnInit {
   selected;
   filteredOptions: Observable<any[]>;
   filteredOptionsTipo: Observable<any[]>;
+  //Variables para verificar que usuario esta logueado
+  viewSecretaria=false;
+  viewPresidencia=false;
   viewNominas = false;
   viewUcpas = false;
+  viewCidej=false;
+  viewCit=false;
   viewAdminUcpas = false;
   dataSource = new MatTableDataSource<any>();
   nombreTitulo;
@@ -99,6 +104,16 @@ export class GestionesComponent implements OnInit {
   }
 
   valProfile(){
+// esto despues hay que quitarlo 
+
+this.viewSecretaria=true;
+this.viewPresidencia=false;
+this.viewNominas = false;
+this.viewUcpas = false;
+this.viewCidej=false;
+this.viewCit=false;
+this.viewAdminUcpas = false;
+
     for(var i=0; i<this.session.PERFILES.length; i++){
        if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
            this.viewNominas = true;
@@ -122,7 +137,6 @@ export class GestionesComponent implements OnInit {
         let estado = this.idEstado == 1 ? "En solicitudes" : this.idEstado === 2 ? "Atendidas" : "Rechazadas";
           swal("Gestiones Dependencias", "No se han encontrado gestiones " + estado, "info")
         }
-
 
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

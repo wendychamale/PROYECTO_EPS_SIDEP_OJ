@@ -62,7 +62,7 @@
 
                   <div class="row mb-3">
                     <div class="col-2" style="text-align: center;">
-                      <button mat-raised-button *ngIf="idEstado==1 && this.viewUcpas" class="btn btn-primary" (click)="crear();" style="font-size: 12px;">
+                      <button mat-raised-button *ngIf="idEstado==1 && this.viewSecretaria || this.viewPresidencia " class="btn btn-primary" (click)="crear();" style="font-size: 12px;">
                         <i class="fa fa-plus"></i>
                         &nbsp;&nbsp; Crear
                       </button>

@@ -12,7 +12,7 @@ export class LoginService {
   constructor(private http: HttpClient,private appSettings:AppconfigService) { }
 
   login(usuario): Observable<any>{
-    return this.http.post<any>(this.getURL(this.appSettings.restOAUTH,'Login/validarUsuarioInterno'),usuario)
+    return this.http.get<any>(this.getURL(this.appSettings.restOAUTH,'Login/validarUsuarioInterno'),usuario)
     .pipe(
       catchError(this.handleError('getHeroes', []))
     );

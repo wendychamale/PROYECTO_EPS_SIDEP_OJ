@@ -36,6 +36,7 @@ interface Filex extends Blob {
 export class CreacionComponent implements OnInit {
 
   creation: FormGroup;
+  constantes;
   //hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('none');
   departamentos;
@@ -52,6 +53,14 @@ export class CreacionComponent implements OnInit {
   validaFechaPublica = false;
   checked = false;
   
+  //Variables para verificar que usuario esta logueado
+  viewSecretaria=false;
+  viewPresidencia=false;
+  viewNominas = false;
+  viewUcpas = false;
+  viewCidej=false;
+  viewCit=false;
+  viewAdminUcpas = false;
 /* Controles */
   codDependencia;
   codPresupuestario;
@@ -76,6 +85,7 @@ export class CreacionComponent implements OnInit {
     private router: Router,private route:ActivatedRoute
   ) { 
     this.session=this.authService.getsession().SESSION;
+    this.constantes = this.authService.getsession().CONSTANTES;
   }
 
   ngOnInit() {
@@ -113,7 +123,7 @@ export class CreacionComponent implements OnInit {
       data => {
         this.listArea = data;
       });
-
+      this.valProfile();
   }
 
   listFuncionalidad: Funcionalidad[] = [
@@ -126,7 +136,92 @@ export class CreacionComponent implements OnInit {
     { value: 'DEL', viewValue: 'DEL' },
     { value: 'DE LA', viewValue: 'DE LA' }
   ];
+  
+  valProfile(){
+    // esto despues hay que quitarlo 
+    
+    this.viewSecretaria=true;
+    this.viewPresidencia=false;
+    this.viewNominas = false;
+    this.viewUcpas = false;
+    this.viewCidej=false;
+    this.viewCit=false;
+    this.viewAdminUcpas =false;
+    
+    if(this.viewSecretaria || this.viewPresidencia){
+      console.log("Presidencia,Secretaria");
+      this.creation.controls['nombreDep'].enable();
+      this.creation.controls['cortoDep'].enable();
+      this.creation.controls['gafeteDep'].enable();
+      this.creation.controls['documentoDep'].enable();
+      this.creation.controls['fechaAcuerdo'].enable();
+      this.creation.controls['inicioVigencia'].enable();
+      this.creation.controls['fechaPublicacion'].enable();
 
+      this.creation.controls['codDependencia'].disable();
+      this.creation.controls['codPresupuestario'].disable();
+      this.creation.controls['selConector'].disable();
+      this.creation.controls['selFuncionalidad'].disable();
+      this.creation.controls['selArea'].disable();
+      this.creation.controls['selDepartamento'].disable();
+      this.creation.controls['selMunicipio'].disable();
+      this.creation.controls['referencia'].disable();
+      this.creation.controls['inicioVigRef'].disable();
+      this.creation.controls['chkRefVigencia'].disable();     
+    }
+    if(this.viewUcpas){
+      console.log("UCPAS");
+      this.creation.controls['codDependencia'].enable();
+      this.creation.controls['codPresupuestario'].enable();
+      this.creation.controls['selConector'].enable();
+      this.creation.controls['selFuncionalidad'].enable();
+      this.creation.controls['selArea'].enable();
+      this.creation.controls['selMunicipio'].enable();
+      this.creation.controls['referencia'].enable();
+      this.creation.controls['selDepartamento'].enable();
+
+      this.creation.controls['nombreDep'].disable();
+      this.creation.controls['inicioVigencia'].disable();
+      this.creation.controls['cortoDep'].disable();
+      this.creation.controls['gafeteDep'].disable();
+      this.creation.controls['documentoDep'].disable();
+      this.creation.controls['fechaAcuerdo'].disable();
+      this.creation.controls['fechaPublicacion'].disable();
+      this.creation.controls['inicioVigRef'].disable();
+      this.creation.controls['chkRefVigencia'].disable();   
+    }
+
+    if(this.viewAdminUcpas){
+      console.log("admin UCPAS");
+      this.creation.controls['codDependencia'].enable();
+      this.creation.controls['codPresupuestario'].enable();
+      this.creation.controls['selConector'].enable();
+      this.creation.controls['selFuncionalidad'].enable();
+      this.creation.controls['selArea'].enable();
+      this.creation.controls['selMunicipio'].enable();
+      this.creation.controls['referencia'].enable();
+      this.creation.controls['selDepartamento'].enable();
+
+      this.creation.controls['nombreDep'].enable();
+      this.creation.controls['inicioVigencia'].enable();
+      this.creation.controls['cortoDep'].enable();
+      this.creation.controls['gafeteDep'].enable();
+      this.creation.controls['documentoDep'].enable();
+      this.creation.controls['fechaAcuerdo'].enable();
+      this.creation.controls['fechaPublicacion'].enable();
+      this.creation.controls['inicioVigRef'].enable();
+      this.creation.controls['chkRefVigencia'].enable();   
+    }
+        for(var i=0; i<this.session.PERFILES.length; i++){
+           if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
+               this.viewNominas = true;
+           }else if(this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL){
+            this.viewUcpas = true;
+          }else if(this.constantes.ADMIN_UCPAS == this.session.PERFILES[i].ID_PERFIL){
+            this.viewAdminUcpas = true;
+          }
+       }
+      } 
 
   getMunicipio(event: any, valDepto: number) {
     this.creation.controls.selMunicipio.setValue(0);
@@ -190,50 +285,106 @@ export class CreacionComponent implements OnInit {
 
 
   crearDependencia(){
+   let area=1;
 
-    let dependencia={
-     
-     CODIGO_DEPENDENCIA:this.creation.value.codDependencia,
-     CODIGO_PRESUPUESTARIO:this.creation.value.codPresupuestario,
-     NOMBRE_DEPENDENCIA:this.creation.value.nombreDep.toUpperCase(),
-     NOMBRE_GAFETE:this.creation.value.gafeteDep.toUpperCase(),
-     NOMBRE_ABREVIADO:this.creation.value.cortoDep.toUpperCase(),
-     NOMBRE_DOCUMENTO:this.creation.value.documentoDep.toUpperCase(),
-     CONECTOR:this.creation.value.selConector,
-     FECHA_DEL_ACUERDO:this.datePipe.transform(this.creation.value.fechaAcuerdo, 'dd/MM/yyyy'),
-     FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.creation.value.inicioVigencia, 'dd/MM/yyyy'),     
-     FECHA_ANULACION:"",
-     FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
-     OBS_FECHA_VIGENCIA:this.creation.value.inicioVigRef.toUpperCase(),
-     REFERENCIA:this.creation.value.referencia.toUpperCase(),
-     FUNCION_UNIDAD:this.creation.value.selFuncionalidad,
-     DEPARTAMENTO:this.creation.value.selDepartamento,
-     MUNICIPIO:this.creation.value.selMunicipio,
-     TIPO_AREA:this.creation.value.selArea,
-     IP:"",
-     ID_USUARIO_REGISTRO:this.session.ID_USUARIO,
-     ARCHIVO:"",
-     NOMBRE_ARCHIVO:"",
-     ID_SOLICITUD:""
-    }
+   if (this.viewPresidencia){
+    area=2;
+   }
+    console.log("Entramos a crear dependencia ");
+    if (this.viewPresidencia || this.viewSecretaria){
+      let dependencia={
+        CODIGO_DEPENDENCIA:null,
+        CODIGO_PRESUPUESTARIO:null,
+        NOMBRE_DEPENDENCIA:this.creation.value.nombreDep.toUpperCase(),
+        NOMBRE_GAFETE:this.creation.value.gafeteDep.toUpperCase(),
+        NOMBRE_ABREVIADO:this.creation.value.cortoDep.toUpperCase(),
+        NOMBRE_DOCUMENTO:this.creation.value.documentoDep.toUpperCase(),
+        CONECTOR:'',
+        FECHA_DEL_ACUERDO:this.datePipe.transform(this.creation.value.fechaAcuerdo, 'dd/MM/yyyy'),
+        FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.creation.value.inicioVigencia, 'dd/MM/yyyy'),     
+        FECHA_ANULACION:"",
+        FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
+        OBS_FECHA_VIGENCIA:'',
+        PROCESO_ESTADO_AREA:'UCPAS',
+        REFERENCIA:'',
+        FUNCION_UNIDAD:'',
+        DEPARTAMENTO:null,
+        MUNICIPIO:null,
+        TIPO_AREA:area,
+        IP:"",
+        ID_USUARIO_REGISTRO:this.session.ID_USUARIO,
+        ARCHIVO:"",
+        NOMBRE_ARCHIVO:"",
+        ID_SOLICITUD:""
+       }
 
-    if(this.files.length!=0){
-      this.files.forEach(element => {   
-        this.getBase64(element).then(
-          data => {
-
-            if(data){
-
-              dependencia.NOMBRE_ARCHIVO = element.name;
-              dependencia.ARCHIVO = data.toString();
-              console.log("objeto " + dependencia); 
-              this.saveDependencia(dependencia);
-
+       if(this.files.length!=0){
+        this.files.forEach(element => {   
+          this.getBase64(element).then(
+            data => {
+  
+              if(data){
+  
+                dependencia.NOMBRE_ARCHIVO = element.name;
+                dependencia.ARCHIVO = data.toString();
+                console.log("objeto " + dependencia); 
+                this.saveDependencia(dependencia);
+  
+              }
             }
-          }
-        );
-      });    
+          );
+        });    
+      }
     }
+   
+    if (this.viewUcpas){
+      let dependencia={
+    
+
+        CODIGO_DEPENDENCIA:this.creation.value.codDependencia,
+        CODIGO_PRESUPUESTARIO:this.creation.value.codPresupuestario,
+        NOMBRE_DEPENDENCIA:this.creation.value.nombreDep.toUpperCase(),
+        NOMBRE_GAFETE:this.creation.value.gafeteDep.toUpperCase(),
+        NOMBRE_ABREVIADO:this.creation.value.cortoDep.toUpperCase(),
+        NOMBRE_DOCUMENTO:this.creation.value.documentoDep.toUpperCase(),
+        CONECTOR:this.creation.value.selConector,
+        FECHA_DEL_ACUERDO:this.datePipe.transform(this.creation.value.fechaAcuerdo, 'dd/MM/yyyy'),
+        FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.creation.value.inicioVigencia, 'dd/MM/yyyy'),     
+        FECHA_ANULACION:"",
+        FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
+        OBS_FECHA_VIGENCIA:this.creation.value.inicioVigRef.toUpperCase(),
+        REFERENCIA:this.creation.value.referencia.toUpperCase(),
+        FUNCION_UNIDAD:this.creation.value.selFuncionalidad,
+        DEPARTAMENTO:this.creation.value.selDepartamento,
+        MUNICIPIO:this.creation.value.selMunicipio,
+        TIPO_AREA:this.creation.value.selArea,
+        IP:"",
+        ID_USUARIO_REGISTRO:this.session.ID_USUARIO,
+        ARCHIVO:"",
+        NOMBRE_ARCHIVO:"",
+        ID_SOLICITUD:""
+       }
+
+       if(this.files.length!=0){
+        this.files.forEach(element => {   
+          this.getBase64(element).then(
+            data => {
+  
+              if(data){
+  
+                dependencia.NOMBRE_ARCHIVO = element.name;
+                dependencia.ARCHIVO = data.toString();
+                console.log("objeto " + dependencia); 
+                this.saveDependencia(dependencia);
+  
+              }
+            }
+          );
+        });    
+      }
+    }
+
+  
 
   }
 
@@ -242,6 +393,7 @@ export class CreacionComponent implements OnInit {
     this.mantenimientoDependenciaService.insDependencia(dependencia).subscribe(
       data=>{
         if(data.result=='OK'){
+          console.log("rsssssssss"+data.msj);
          swal("Solicitud de Dependencia Creada", data.msj, "success")
          this.router.navigate(['/mantenimientos/gestiones/1']);
         }else{
