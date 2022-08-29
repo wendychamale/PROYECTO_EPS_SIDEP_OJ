@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<configuration>
+<sistema>
+	<nombre>OAUTH</nombre>
+</sistema>
+<db>
+  	<host>localhost</host>
+  	<port>1521</port>
+  	<sid>xe</sid>
+  	<user>SIDEP</user>
+  	<pass>tets123$</pass>
+  	<schema>SIDEP</schema>
+  	<version>1.0.0.0</version>
+ </db>
+ 
+</configuration>
