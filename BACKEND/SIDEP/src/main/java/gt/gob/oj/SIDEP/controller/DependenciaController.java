@@ -29,6 +29,20 @@ public class DependenciaController {
 			return Response.ok(new jsonResult(-1, "Error", e.getMessage())).build();
 		}
 	}
+	
+	//se crea nuevo servicio para consultar dependencias por estado de area
+	@GET
+	@Path("/getProcesoArea/{id_estado_proceso}/getTipo/{id_tipo_gestion}/getArea/{estado_area}")
+	@Produces({ "application/json" })
+	public Response getGestDependenciaArea(@PathParam("id_estado_proceso") int ID_ESTADO_PROCESO,
+			@PathParam("id_tipo_gestion") int ID_TIPO_GESTION, @PathParam("estado_area") String ESTADO_AREA) {
+		try {
+			return Response.ok(this.manager.getGestDependenciaArea(ID_ESTADO_PROCESO, ID_TIPO_GESTION,ESTADO_AREA)).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.ok(new jsonResult(-1, "Error", e.getMessage())).build();
+		}
+	}
 
 	@GET
 	@Path("/getGestDependencia/{id_gestion_dependencia}/getGestion")

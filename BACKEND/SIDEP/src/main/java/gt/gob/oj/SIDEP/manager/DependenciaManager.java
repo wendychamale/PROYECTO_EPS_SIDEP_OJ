@@ -60,6 +60,36 @@ public class DependenciaManager {
     return salida;
   }
   
+  public List<Map<String, Object>> getGestDependenciaArea(int P_ID_ESTADO_PROCESO, int P_ID_TIPO_GESTION,String P_PROCESO_ESTADO_AREA) throws Exception {
+	    List<Map<String, Object>> salida = new ArrayList<>();
+	    ConnectionsPool c = new ConnectionsPool();
+	    Connection conn = c.conectar();
+	    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_DEPENDENCIA.PROC_GET_GEST_DEPENDENCIA_AREA(?,?,?,?,?)");
+	    call.setInt("p_id_estado_proceso", P_ID_ESTADO_PROCESO);
+	    call.setInt("p_id_tipo_gestion", P_ID_TIPO_GESTION);
+	    call.setString("p_proceso_estado_area", P_PROCESO_ESTADO_AREA);
+	    call.registerOutParameter("P_CUR_DATASET", OracleTypes.CURSOR);
+	    call.registerOutParameter("P_MSJ", OracleTypes.VARCHAR);
+	    call.execute();
+	    ResultSet rset = (ResultSet)call.getObject("P_CUR_DATASET");
+	    ResultSetMetaData meta = rset.getMetaData();
+	    while (rset.next()) {
+	      Map<String, Object> map = new HashMap<>();
+	      for (int i = 1; i <= meta.getColumnCount(); i++) {
+	        String key = meta.getColumnName(i).toString();
+	        String value = Objects.toString(rset.getString(key), "");
+	        map.put(key, value);
+	      } 
+	      salida.add(map);
+	    } 
+	    rset.close();
+	    call.close();
+	    conn.close();
+	    return salida;
+	  }
+	  
+  
+  
   public List<Map<String, Object>> getGestion(int P_ID_GESTION_DEPENDENCIA) throws Exception {
     List<Map<String, Object>> salida = new ArrayList<>();
     ConnectionsPool c = new ConnectionsPool();
