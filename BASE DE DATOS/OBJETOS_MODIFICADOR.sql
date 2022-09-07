@@ -641,6 +641,14 @@ CREATE OR REPLACE PACKAGE SIDEP.PKG_DEPENDENCIA AS
         p_id_tipo_gestion     tt_gest_dependencia.id_tipo_gestion%type DEFAULT 0,
         P_CUR_DATASET OUT SYS_REFCURSOR,
         P_MSJ OUT VARCHAR2);
+  --Este es un nuevo procedimiento que busca las dependencias por estado en que area se encuentra      
+    PROCEDURE PROC_GET_GEST_DEPENDENCIA_AREA (
+        p_id_estado_proceso   tt_gest_dependencia.id_estado_proceso%type DEFAULT 0,
+        p_id_tipo_gestion     tt_gest_dependencia.id_tipo_gestion%type DEFAULT 0,
+        p_proceso_estado_area tt_gest_dependencia.proceso_estado_area%type DEFAULT '',
+        P_CUR_DATASET OUT SYS_REFCURSOR,
+        P_MSJ OUT VARCHAR2);
+        
     PROCEDURE PROC_GET_GESTION (P_ID_GESTION TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,P_CUR_DATASET OUT SYS_REFCURSOR,P_MSJ OUT VARCHAR2);
     PROCEDURE PROC_INS_TT_GEST_DEPENDENCIA(
         p_codigo_dependencia        TT_GEST_DEPENDENCIA.CODIGO_DEPENDENCIA%TYPE,
@@ -937,6 +945,61 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 C.ID_TIPO_GESTION = DECODE(P_ID_TIPO_GESTION, 0, C.ID_TIPO_GESTION, P_ID_TIPO_GESTION)
             ORDER BY FECHA_REGISTRO DESC; 
     END PROC_GET_GEST_DEPENDENCIA;
+    
+      /* Obitne la lista de todas las gestiones por area especifica*/
+    PROCEDURE PROC_GET_GEST_DEPENDENCIA_AREA (
+        p_id_estado_proceso   tt_gest_dependencia.id_estado_proceso%type DEFAULT 0,
+        p_id_tipo_gestion     tt_gest_dependencia.id_tipo_gestion%type DEFAULT 0,
+        p_proceso_estado_area tt_gest_dependencia.proceso_estado_area%type DEFAULT '',
+        P_CUR_DATASET   OUT SYS_REFCURSOR,
+        P_MSJ           OUT VARCHAR2
+    )
+        AS
+    BEGIN
+        OPEN P_CUR_DATASET FOR 
+            /* Formatted on 05/09/2022  */
+            SELECT ID_GESTION_DEPENDENCIA,
+                CODIGO_DEPENDENCIA,
+                CODIGO_PRESUPUESTARIO,
+                NOMBRE_DEPENDENCIA,
+                NOMBRE_GAFETE,
+                NOMBRE_ABREVIADO,
+                NOMBRE_DOCUMENTO,
+                CONECTOR,
+                FECHA_DEL_ACUERDO,
+                FECHA_ENTRA_VIGENCIA,
+                FECHA_ANULACION,
+                REFERENCIA,
+                FUNCION_UNIDAD,
+                DEPARTAMENTO,
+                RH_PKG.DEPARTAMENTO(1,DEPARTAMENTO) NOMBRE_DEPARTAMENTO,
+                MUNICIPIO,
+                RH_PKG.MUNICIPIO(1,DEPARTAMENTO,MUNICIPIO) NOMBRE_MUNICIPIO,
+                TIPO_AREA,
+                E.NOMBRE_AREA,
+                ACUERDO_DIGITAL,
+                A.OBSERVACIONES,
+                A.ID_ESTADO_PROCESO,
+                B.ESTADO_PROCESO,
+                A.ID_TIPO_GESTION,
+                C.TIPO_GESTION,
+                d.nombre,
+                A.FECHA_PUBLICACION,
+                a.obs_fecha_vigencia,
+                A.PROCESO_ESTADO_AREA
+            FROM SIDEP.TT_GEST_DEPENDENCIA A
+                INNER JOIN TS_ESTADO_PROCESO B ON A.ID_ESTADO_PROCESO = B.ID_ESTADO_PROCESO 
+                INNER JOIN TS_TIPO_GESTION C ON A.ID_TIPO_GESTION = C.ID_TIPO_GESTION 
+                INNER JOIN TC_USUARIO D ON A.ID_USUARIO_REGISTRO = D.ID_USUARIO
+                INNER JOIN RRHH.RH_TIPO_AREA E ON A.TIPO_AREA = E.ID_AREA
+            WHERE
+                A.ID_ESTADO = 1 AND
+                B.ID_ESTADO_PROCESO = DECODE(P_ID_ESTADO_PROCESO,0, B.ID_ESTADO_PROCESO,P_ID_ESTADO_PROCESO) AND
+                C.ID_TIPO_GESTION = DECODE(P_ID_TIPO_GESTION, 0, C.ID_TIPO_GESTION, P_ID_TIPO_GESTION) AND
+                (A.PROCESO_ESTADO_AREA=P_PROCESO_ESTADO_AREA OR A.PROCESO_ESTADO_AREA is null )
+                
+            ORDER BY FECHA_REGISTRO DESC; 
+    END PROC_GET_GEST_DEPENDENCIA_AREA;
     
     /*Obtiene una gestion especifica*/
     PROCEDURE PROC_GET_GESTION (
