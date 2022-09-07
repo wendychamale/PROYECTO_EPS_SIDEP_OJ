@@ -699,6 +699,7 @@ CREATE OR REPLACE PACKAGE SIDEP.PKG_DEPENDENCIA AS
         p_ruta_archivo              VARCHAR2,
         p_fecha_publicacion         varchar2,
         p_obs_fecha_vigencia        TT_GEST_DEPENDENCIA.OBS_FECHA_VIGENCIA%TYPE,
+        p_proceso_estado_area       TT_GEST_DEPENDENCIA.PROCESO_ESTADO_AREA%TYPE,
         p_id_salida                 OUT TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,
         p_msj                        OUT VARCHAR2);        
     PROCEDURE PROC_BAJA_TT_GEST_DEPENDENCIA(
@@ -1183,6 +1184,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
         p_ruta_archivo              VARCHAR2,
         p_fecha_publicacion         varchar2,
         p_obs_fecha_vigencia        TT_GEST_DEPENDENCIA.OBS_FECHA_VIGENCIA%TYPE,
+        p_proceso_estado_area       TT_GEST_DEPENDENCIA.PROCESO_ESTADO_AREA%TYPE,
         p_id_salida                 OUT TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,
         p_msj                        OUT VARCHAR2)
     AS 
@@ -1216,7 +1218,8 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                IP                     = p_ip,
                ID_USUARIO_REGISTRO    = p_id_usuario_registro,
                FECHA_PUBLICACION      = to_date(p_fecha_publicacion,'DD/MM/YYYY'),
-               OBS_FECHA_VIGENCIA     = p_obs_fecha_vigencia
+               OBS_FECHA_VIGENCIA     = p_obs_fecha_vigencia,
+               PROCESO_ESTADO_AREA    = p_proceso_estado_area
         WHERE  ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
         
         p_id_salida := p_id_gestion_dependencia;    

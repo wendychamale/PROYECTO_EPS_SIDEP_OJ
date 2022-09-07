@@ -92,6 +92,7 @@ export class CreacionComponent implements OnInit {
   idGes;
   idEstado;
   idTipoGestion;
+  areaSiguiente;
   
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
@@ -553,6 +554,10 @@ archivo(nombre,id){
 //implementamos nuevos metodos para seguir con la creacion de una dependencia
 CrearDependencia1(){
 console.log("Crear dependencia continuacion.....");
+if(this.viewUcpas){
+  this.areaSiguiente='NOMINAS';
+}
+
   let dependencia={
   
    ID_GESTION_DEPENDENCIA: this.idGestion,
@@ -573,6 +578,7 @@ console.log("Crear dependencia continuacion.....");
    FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.creation.value.inicioVigencia, 'dd/MM/yyyy'),
    FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
    OBS_FECHA_VIGENCIA:this.creation.value.inicioVigRef.toUpperCase(),
+   PROCESO_ESTADO_AREA: this.areaSiguiente,
    FUNCION_UNIDAD:this.creation.value.selFuncionalidad,
    DEPARTAMENTO:this.creation.value.selDepartamento,
    MUNICIPIO:this.creation.value.selMunicipio,
