@@ -29,8 +29,11 @@
       }
     </style>  -->
     <div class="titulo">
-      <p>
+      <p *ngIf="this.opcion=='Editar'" >
           Actualizar Solicitud de Dependencia
+      </p>
+      <p *ngIf="this.opcion=='Insertar'">
+        Creación de Dependencia
       </p>
     </div>
     <form [formGroup]="update" name="formModificacion" class="register-form">
@@ -50,15 +53,15 @@
                  <div class="row row-cols-2">
                 <div class="form-group col">
                   <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                    <input matInput formControlName="codDependencia" type="text" placeholder="Código Dependencia" (ngModelChange)="valCodDep($event)" [readonly]="loadHabilitados('codDependencia')">
+                    <input matInput formControlName="codDependencia" type="text" placeholder="Código Dependencia" (ngModelChange)="valCodDep($event)" [readonly]="!this.viewUcpas">
                     <mat-error *ngIf="this.update.controls.codDependencia.errors?.required">
                       Código de Dependencia Requerido
                     </mat-error>
                   </mat-form-field>
-                </div>
+                </div>                
                 <div class="form-group col">
                   <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                    <input matInput formControlName="codPresupuestario" type="text" maxlength="5" placeholder="Código Presupuestario" (ngModelChange)="valCodPres($event)" [readonly]="loadHabilitados('codPresupuestario')">
+                    <input matInput formControlName="codPresupuestario" type="text" maxlength="5" placeholder="Código Presupuestario" (ngModelChange)="valCodPres($event)" [readonly]="!this.viewUcpas">
                     <mat-error *ngIf="this.update.controls.codPresupuestario.errors?.required">
                       Código Presupuestario Requerido
                     </mat-error>
@@ -68,7 +71,7 @@
             </div>
             <div class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                <input matInput formControlName="nombreDep" class="textos" type="text" placeholder="Nombre" (ngModelChange)="asignaNombreDoc($event)" [readonly]="loadHabilitados('nombreDep')"> 
+                <input matInput formControlName="nombreDep" class="textos" type="text" placeholder="Nombre" (ngModelChange)="asignaNombreDoc($event)" [readonly]="this.viewUcpas"> 
                 <mat-error *ngIf="this.update.controls.nombreDep.errors?.required">
                   Nombre Dependencia Requerido
                 </mat-error>
@@ -77,7 +80,7 @@
             </div>
             <div class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                <input matInput formControlName="cortoDep" class="textos" type="text" maxlength="60" placeholder="Nombre Corto" [readonly]="loadHabilitados('cortoDep')">
+                <input matInput formControlName="cortoDep" class="textos" type="text" maxlength="60" placeholder="Nombre Corto" [readonly]="this.viewUcpas">
                 <mat-error *ngIf="this.update.controls.cortoDep.errors?.required">
                   Nombre Abreviado Requerido
                 </mat-error>
@@ -86,7 +89,7 @@
             </div>
             <div class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                <input matInput formControlName="gafeteDep" class="textos" type="text" maxlength="60" placeholder="Nombre Gafete" [readonly]="loadHabilitados('gafeteDep')">
+                <input matInput formControlName="gafeteDep" class="textos" type="text" maxlength="60" placeholder="Nombre Gafete" [readonly]="this.viewUcpas">
                 <mat-error *ngIf="this.update.controls.gafeteDep.errors?.required">
                   Nombre Gafete Requerido
                 </mat-error>
@@ -95,7 +98,7 @@
             </div>
             <div class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                <input matInput formControlName="documentoDep" class="textos" type="text" placeholder="Nombre Documento"  readonly>
+                <input matInput formControlName="documentoDep" class="textos" type="text" placeholder="Nombre Documento"  [readonly]="this.viewUcpas">
                 <mat-error *ngIf="this.update.controls.documentoDep.errors?.required">
                   Nombre Documento Requerido
                 </mat-error>
@@ -106,8 +109,8 @@
               <div class="row row-cols-3">
                 <div class="col">
                   <mat-form-field>
-                      <input matInput *ngIf="loadHabilitados('conectorDep')" formControlName="conectorDep" class="textos" type="text" placeholder="CONECTOR" [readonly]="loadHabilitados('conectorDep')">
-                      <mat-select *ngIf="loadHabilitados('selConector')" placeholder="CONECTOR" formControlName="selConector">
+                      <input matInput  *ngIf="this.opcion!='Insertar'"  formControlName="conectorDep" class="textos" type="text" placeholder="CONECTOR" [readonly]="!this.viewUcpas">
+                      <mat-select *ngIf="this.viewUcpas" placeholder="CONECTOR" formControlName="selConector" (selectionChange)="capturar($event.value)">
                       <mat-option *ngFor="let conector of listConector" [value]="conector.value" style="font-size: 12px;">{{conector.viewValue}}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="this.update.controls.selConector.errors?.required">
@@ -117,8 +120,8 @@
                 </div>
                 <div class="col">
                   <mat-form-field>
-                    <input matInput *ngIf="loadHabilitados('funcionDep')" formControlName="funcionDep" class="textos" type="text" placeholder="FUNCIONALIDAD" [readonly]="loadHabilitados('funcionDep')">
-                    <mat-select *ngIf="loadHabilitados('selFuncionalidad')" placeholder="FUNCIONALIDAD" formControlName="selFuncionalidad">
+                    <input  *ngIf="this.opcion!='Insertar'" matInput formControlName="funcionDep" class="textos" type="text" placeholder="FUNCIONALIDAD" [readonly]="!this.viewUcpas">
+                    <mat-select *ngIf="this.viewUcpas" placeholder="FUNCIONALIDAD" formControlName="selFuncionalidad" (selectionChange)="capturar1($event.value)">
                       <mat-option *ngFor="let funcionalidad of listFuncionalidad" [value]="funcionalidad.value" style="font-size: 12px;">{{funcionalidad.viewValue}}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="this.update.controls.selFuncionalidad.errors?.required">
@@ -128,8 +131,8 @@
                 </div>
                 <div class="col">
                   <mat-form-field>
-                      <input matInput *ngIf="loadHabilitados('areaDep')" formControlName="areaDep" class="textos" type="text" placeholder="AREA" [readonly]="loadHabilitados('areaDep')">
-                      <mat-select *ngIf="loadHabilitados('selArea')" placeholder="AREA" formControlName="selArea" >
+                      <input matInput *ngIf="this.opcion!='Insertar'"  formControlName="areaDep" class="textos" type="text" placeholder="AREA" [readonly]="!this.viewUcpas">
+                      <mat-select *ngIf="this.viewUcpas" placeholder="AREA" formControlName="selArea" (selectionChange)="capturar2($event.value)">
                       <mat-option *ngFor="let area of listArea" [value]="area.ID_AREA" style="font-size: 12px;">{{area.NOMBRE_AREA}}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="this.update.controls.selArea.errors?.required">
@@ -142,13 +145,13 @@
             <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
               <div id="fecs" [ngClass]="!viewAnulacion() ? 'row row-cols-3' : 'row row-cols-2'">
                 <div class="form-group col">
-                    <mat-form-field *ngIf="loadHabilitados('acuerdoDep')" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
-                        <input matInput  formControlName="acuerdoDep" class="textos" type="text" placeholder="FECHA ACUERDO" [readonly]="loadHabilitados('acuerdoDep')">
+                    <mat-form-field *ngIf="this.viewUcpas" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
+                        <input matInput  formControlName="acuerdoDep" class="textos" type="text" placeholder="FECHA ACUERDO" [readonly]="this.viewUcpas">
                         <mat-error *ngIf="this.update.controls.acuerdoDep.errors?.required">
                           FECHA ACUERDO REQUERIDO
                         </mat-error>
                       </mat-form-field>
-                      <mat-form-field *ngIf="loadHabilitados('fechaAcuerdo')" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
+                      <mat-form-field *ngIf="!this.viewUcpas" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
                     <input matInput (click)="picker1.open()" formControlName="fechaAcuerdo" (ngModelChange)="parseDate($event)" [matDatepicker]="picker1"
                       placeholder="FECHA ACUERDO">
                     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
@@ -158,24 +161,27 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div *ngIf="!viewAnulacion()" class="form-group col">
-                    <mat-form-field *ngIf="loadHabilitados('inicioVigencia')" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
-                        <input matInput (click)="picker4.open()" formControlName="fechaPublicacion" (ngModelChange)="parseDatePublicacion($event)" [matDatepicker]="picker4"
-                        placeholder="FECHA PUBLICACION">
-                      <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
-                      <mat-datepicker touchUi #picker4 readonly></mat-datepicker>
-                      <mat-error *ngIf="this.update.controls.fechaPublicacion.errors?.required">
-                        FECHA PUBLICACION REQUERIDO
-                      </mat-error> 
-                      <mat-hint *ngIf="validaFechaPublica" style="color:red;">
-                        FECHA NO PUEDE SER ANTERIOR A FECHA ACUERDO
-                      </mat-hint>
-                    </mat-form-field>    
+                <div *ngIf="!viewAnulacion() " class="form-group col">
+                    <mat-form-field *ngIf="this.viewUcpas" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
+                        <input matInput  formControlName="acuerdoDep" class="textos" type="text" placeholder="FECHA ACUERDO" [readonly]="this.viewUcpas">
+                        <mat-error *ngIf="this.update.controls.acuerdoDep.errors?.required">
+                          FECHA ACUERDO REQUERIDO
+                        </mat-error>
+                      </mat-form-field>
+                      <mat-form-field *ngIf="!this.viewUcpas" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
+                    <input matInput (click)="picker1.open()" formControlName="fechaPublicacion" (ngModelChange)="parseDate($event)" [matDatepicker]="picker1"
+                      placeholder="FECHA PUBLICACION">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi #picker1></mat-datepicker>
+                    <mat-error *ngIf="this.update.controls.fechaPublicacion.errors?.required">
+                      FECHA ACUERDO REQUERIDO
+                    </mat-error>
+                  </mat-form-field>                  
                 </div>
                 <div class="form-group col">
 
-                    <mat-form-field *ngIf="loadHabilitados('inicioDep')" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
-                        <input matInput  formControlName="inicioDep" class="textos" type="text" placeholder="INICIO VIGENCIA" [readonly]="loadHabilitados('inicioDep')">
+                    <mat-form-field *ngIf="this.viewUcpas" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
+                        <input matInput  formControlName="inicioDep" class="textos" type="text" placeholder="INICIO VIGENCIA1" [readonly]="this.viewUcpas">
                       <mat-error *ngIf="this.update.controls.inicioDep.errors?.required">
                         FECHA INICIO VIGENCIA REQUERIDO
                       </mat-error> 
@@ -184,8 +190,8 @@
                       </mat-hint>
                     </mat-form-field>
 
-
-                    <div *ngIf="loadHabilitados('inicioVigencia')" class="row mb-2">
+<!--
+                    <div  class="row mb-2">
 
                         <div class="col-2" style="padding-top: 2%; ">
                           <mat-checkbox color="primary" formControlName="chkRefVigencia" [(ngModel)]="checked" (ngModelChange)="asignarRequerido($event)"></mat-checkbox>
@@ -214,18 +220,17 @@
                             <mat-hint align="end">{{f.inicioVigRef.value.length}} / 1024</mat-hint>
                           </mat-form-field>
     
-                        </div>
-    
-                      </div>
+                        </div>             
+                      </div>  -->
                 </div>
               </div>
             </div>
-
+<!--
             <div *ngIf="viewAnulacion()"  class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
                 <div class="row row-cols-2">
                   <div class="form-group col">
                       <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
-                          <input matInput  formControlName="publicaDep" class="textos" type="text" placeholder="FECHA PUBLICACION" [readonly]="loadHabilitados('publicaDep')">
+                          <input matInput  formControlName="publicaDep" class="textos" type="text" placeholder="FECHA PUBLICACION" [readonly]="this.viewUcpas">
                         <mat-error *ngIf="this.update.controls.publicaDep.errors?.required">
                           FECHA PUBLICACION REQUERIDO
                         </mat-error> 
@@ -247,15 +252,15 @@
                     </div>                  
                   </div>
               </div>
-  
+  -->
 
             <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
               <div class="row row-cols-2">
                 <div class="col">
                   <mat-form-field>
-                    <input matInput *ngIf="loadHabilitados('departamentoDep')" formControlName="departamentoDep" class="textos" type="text" placeholder="DEPARTAMENTO" [readonly]="loadHabilitados('departamentoDep')">
-                    <mat-select *ngIf="loadHabilitados('selDepartamento')" placeholder="DEPARTAMENTO" formControlName="selDepartamento">
-                      <mat-option (onSelectionChange)="getMunicipio($event,deptos.DEPARTAMENTO)" *ngFor="let deptos of departamentos" [value]="deptos.DEPARTAMENTO"
+                    <input matInput  formControlName="departamentoDep" class="textos" type="text" placeholder="DEPARTAMENTO" [readonly]="!this.viewUcpas">
+                    <mat-select *ngIf="this.viewUcpas" placeholder="DEPARTAMENTO" formControlName="selDepartamento">
+                      <mat-option (onSelectionChange)="getMunicipio($event,deptos.DEPARTAMENTO,deptos.NOMBRE_DEPARTAMENTO)" *ngFor="let deptos of departamentos" [value]="deptos.DEPARTAMENTO"
                         style="font-size: 12px;">{{deptos.NOMBRE_DEPARTAMENTO}}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="this.update.controls.selDepartamento.errors?.required">
@@ -265,9 +270,9 @@
                 </div>
                 <div class="col">
                   <mat-form-field>
-                      <input matInput *ngIf="loadHabilitados('municipioDep')" formControlName="municipioDep" class="textos" type="text" placeholder="MUNICIPIO" [readonly]="loadHabilitados('municipioDep')">
-                      <mat-select *ngIf="loadHabilitados('selMunicipio')" placeholder="MUNICIPIO" formControlName="selMunicipio" >
-                      <mat-option *ngFor="let munis of municipios" [value]="munis.MUNICIPIO" style="font-size: 12px;">{{munis.NOMBRE_MUNICIPIO}}</mat-option>
+                      <input matInput  formControlName="municipioDep" class="textos" type="text" placeholder="MUNICIPIO" [readonly]="!this.viewUcpas">
+                      <mat-select *ngIf="this.viewUcpas" placeholder="MUNICIPIO" formControlName="selMunicipio" >
+                      <mat-option (onSelectionChange)="capturarmuni(munis.MUNICIPIO,munis.NOMBRE_MUNICIPIO)"   *ngFor="let munis of municipios" [value]="munis.MUNICIPIO" style="font-size: 12px;">{{munis.NOMBRE_MUNICIPIO}}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="this.update.controls.selMunicipio.errors?.required">
                       MUNICIPIO REQUERIDO
@@ -278,7 +283,7 @@
             </div>
             <div class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                <textarea matInput formControlName="referencia" color="warn" class="form-control" placeholder="REFERENCIA" rows="2"></textarea>
+                <textarea matInput formControlName="referencia" color="warn" class="form-control" placeholder="REFERENCIA" rows="2" [readonly]="!this.viewUcpas"></textarea>
                 <mat-error *ngIf="this.update.controls.referencia.errors?.required">
                   REFERENCIA REQUERIDO
                 </mat-error>
@@ -366,9 +371,11 @@
           </div>
         </div>
         <div class="button-group">
-          <button mat-raised-button class="btn btn-primary btn-block" [disabled]="update.invalid || files.length==0 || validaFecha" (click)="actualizarDependencia()" style="font-size: 12px;">Actualizar</button>
+          <button *ngIf="this.opcion=='Editar'" mat-raised-button class="btn btn-primary btn-block" [disabled]="update.invalid || files.length==0 || validaFecha" (click)="actualizarDependencia()" style="font-size: 12px;">Actualizar</button>
+          <button *ngIf="this.opcion=='Insertar'"  mat-raised-button class="btn btn-primary btn-block"[disabled]="update.invalid" (click)="actualizarDependencia()" style="font-size: 12px;">Crear</button>
           <button class="btn btn-danger btn-block" ui-sref="login" (click)="cancelar();" style="font-size: 12px;">Cancelar</button>
         </div>
+
       </div>
     </form>
   </div>

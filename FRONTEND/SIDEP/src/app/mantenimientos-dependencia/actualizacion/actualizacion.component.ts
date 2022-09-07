@@ -58,7 +58,7 @@ export class ActualizacionComponent implements OnInit {
   observaciones;
   validaFechaPublica = false;
   checked = false;
- 
+  opcion='';
   /* Controles */
   codDependencia;
   codPresupuestario;
@@ -86,10 +86,17 @@ export class ActualizacionComponent implements OnInit {
   publicaDep;
   chkRefVigencia;
   inicioVigRef;
-
+ //Variables para verificar que usuario esta logueado
+ viewSecretaria=false;
+ viewPresidencia=false;
+ viewNominas = false;
+ viewUcpas = false;
+ viewCidej=false;
+ viewCit=false;
+ viewAdminUcpas = false;
   //Manejo de controles
   controlsLectura = [];
-
+  controlsLecturarol =[] ;
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
     private router: Router,private route:ActivatedRoute
@@ -105,15 +112,15 @@ export class ActualizacionComponent implements OnInit {
 
     this.update = this.fb.group({
       floatLabel: this.floatLabelControl,
-      codDependencia: ['', Validators.required],      
+     codDependencia: ['', Validators.required],      
       codPresupuestario: ['', Validators.required],      
-      nombreDep: ['', Validators.required],      
+       nombreDep: ['', Validators.required],      
       cortoDep: ['', Validators.required],      
       gafeteDep: ['', Validators.required],      
       documentoDep: ['', Validators.required],      
       selConector: ['', Validators.required],      
-      conectorDep: ['', Validators.required],      
-      selFuncionalidad: ['', Validators.required],      
+      conectorDep: ['',Validators.required],      
+      selFuncionalidad: ['',Validators.required],      
       funcionDep: ['', Validators.required],      
       selArea: ['', Validators.required],      
       areaDep: ['', Validators.required],      
@@ -124,7 +131,8 @@ export class ActualizacionComponent implements OnInit {
       selMunicipio: ['', Validators.required],      
       municipioDep: ['', Validators.required],      
       referencia: ['', Validators.required],      
-      fechaAnulacion: ['', Validators.required],      
+     /* fechaAnulacion: ['', Validators.required],    */                       
+      fechaAnulacion: [''],   
       inicioVigencia: [''],      
       inicioDep: [''],      
       fechaPublicacion: [''],      
@@ -137,7 +145,9 @@ export class ActualizacionComponent implements OnInit {
     this.update.get('codPresupuestario').valueChanges.subscribe((v)=> {if(v.length > 3){this.iniciaValPres = true }else{this.iniciaValPres = false}});
     
     this.loadDependencia();
-    this.asignarControles();
+    this.valProfile();
+   // this.asignarControles();    se comenta solo por que me da duda
+
 
     this.mantenimientoDependenciaService.getListaDepartamento().subscribe(
       data => {
@@ -150,6 +160,30 @@ export class ActualizacionComponent implements OnInit {
       });
 
   }
+
+  
+  valProfile(){
+    // esto despues hay que quitarlo 
+    
+    this.viewSecretaria=false;
+    this.viewPresidencia=false;
+    this.viewUcpas = true;
+    this.viewNominas = false;
+    this.viewCidej=false;
+    this.viewCit=false;
+    this.viewAdminUcpas =false;
+       for(var i=0; i<this.session.PERFILES.length; i++){
+        /*   if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
+               this.viewNominas = true;
+           }else if(this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL){
+            this.viewUcpas = true;
+          }else if(this.constantes.ADMIN_UCPAS == this.session.PERFILES[i].ID_PERFIL){
+            this.viewAdminUcpas = true;
+          }*/
+       }
+      } 
+
+  
 
 
   listFuncionalidad: Funcionalidad[] = [
@@ -168,9 +202,10 @@ export class ActualizacionComponent implements OnInit {
   }
 
   asignarControles(){
+console.log(this.idTipoGestion);
 
     if(this.idTipoGestion == 1){
-      this.controlsLectura.push('codDependencia');
+     this.controlsLectura.push('codDependencia');
       this.controlsLectura.push('codPresupuestario');
       this.controlsLectura.push('selArea');
       this.controlsLectura.push('selFuncionalidad');
@@ -226,19 +261,36 @@ export class ActualizacionComponent implements OnInit {
       this.controlsLectura.push('acuerdoDep');
       this.update.controls.fechaAnulacion.setValidators(Validators.required);
       }
-
-
   }
 
   loadDependencia(){
       this.mantenimientoDependenciaService.getGestDependencia(this.idGes).subscribe(
         data => {
           this.asignarData(data[0]);
+         
         });
   }
 
-  asignarData(data){
+  capturar(conect){
+    this.conectorDep=conect;
+    this.update.controls.conectorDep.setValue(conect);
+ console.log(this.conectorDep);
 
+  }
+  capturar1(conect){
+    this.areaDep=conect;
+    this.update.controls.selFuncionalidad.setValue(conect);
+  }
+  capturar2(conect){
+    this.funcionDep=conect;
+    this.update.controls.selArea.setValue(conect);
+  }
+  
+  capturarmuni(conect:any , nombre:any){
+    this.update.controls.municipioDep.setValue(nombre);
+    this.update.controls.selMunicipio.setValue(conect);
+  }
+  asignarData(data){
     this.update.controls.codDependencia.setValue(data.CODIGO_DEPENDENCIA);
     this.update.controls.codPresupuestario.setValue(data.CODIGO_PRESUPUESTARIO);
     this.update.controls.nombreDep.setValue(data.NOMBRE_DEPENDENCIA); 
@@ -274,6 +326,14 @@ export class ActualizacionComponent implements OnInit {
     this.update.controls.inicioVigRef.setValue(data.OBS_FECHA_VIGENCIA);
 
     this.checked = data.FECHA_ENTRA_VIGENCIA.length == 0;
+
+    if(data.CODIGO_DEPENDENCIA==''){
+      this.opcion='Insertar';
+    }else{
+      this.opcion='Editar';
+    }
+    console.log('datos'+data.CODIGO_DEPENDENCIA);
+    console.log('opcion'+this.opcion);
   }
 
   nombreArchivo(ruta){
@@ -328,7 +388,7 @@ export class ActualizacionComponent implements OnInit {
      TIPO_AREA:this.update.value.selArea,
      ID_SOLICITUD:""
      }    
-
+    console.log(dependencia);
     if(this.files.length>0){
       this.files.forEach(element => {   
         this.getBase64(element).then(
@@ -366,6 +426,7 @@ export class ActualizacionComponent implements OnInit {
   }
 
   updateDependencia(dependencia){
+    console.log("entramos a actualizar")
     this.mantenimientoDependenciaService.updateDependencia(dependencia).subscribe(
       data=>{
         if(data.result=='OK'){
@@ -414,7 +475,11 @@ export class ActualizacionComponent implements OnInit {
       })
   }
   
-  getMunicipio(event: any, valDepto: number) {
+  getMunicipio(event: any, valDepto: number,nombre:any) {
+    console.log(valDepto+"e:"+nombre);
+    this.update.controls.departamentoDep.setValue(nombre);
+    this.update.controls.selDepartamento.setValue(valDepto);
+
     if (event.isUserInput) {
 
       if(valDepto !== this.idDepto){
@@ -600,8 +665,10 @@ export class ActualizacionComponent implements OnInit {
     this.router.navigate(['/mantenimientos/gestiones/'+this.idEstado]);
   }
   
-  loadHabilitados(control){    
+  loadHabilitados(control){
+    console.log("load"+control+this.controlsLectura.indexOf(control) +":"+(this.controlsLectura.indexOf(control) != -1));    
      return this.controlsLectura.indexOf(control) != -1;  
+  // return true;
   }
 
 }

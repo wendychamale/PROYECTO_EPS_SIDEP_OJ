@@ -27,6 +27,10 @@ const routes: Routes = [
     component: CreacionComponent
   },
   {
+    path: 'creacion/:id',
+    component: CreacionComponent
+  },
+  {
     path: 'actualizar/:id/:idTipoGestion/:idEstado',
     component: ActualizacionComponent
   },

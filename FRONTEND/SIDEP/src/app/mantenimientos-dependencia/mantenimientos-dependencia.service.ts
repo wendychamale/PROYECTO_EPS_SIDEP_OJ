@@ -47,6 +47,7 @@ export class MantenimientosDependenciaService {
   }
 
   getGestDependencia(idGestion): Observable<any> {
+    console.log("entramos a "+this.appSettings.restApiServiceBaseUri + 'CreaDependencia/getGestDependencia/' + idGestion + '/getGestion');
     return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'CreaDependencia/getGestDependencia/' + idGestion + '/getGestion')
       .pipe(
         catchError(this.handleError('getGestDependencia', []))
@@ -61,6 +62,13 @@ export class MantenimientosDependenciaService {
       );
   }
 
+  getGestionesArea(idEstado, idTipo, area): Observable<any> {
+    console.log('consultamos a ver dependencia'+this.appSettings.restApiServiceBaseUri + 'Dependencia/getProcesoArea/' + idEstado + '/getTipo/' + idTipo+'/getArea/'+area);
+    return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'Dependencia/getProcesoArea/' + idEstado + '/getTipo/' + idTipo+'/getArea/'+ area)
+      .pipe(
+        catchError(this.handleError('getGestDependencia', []))
+      );
+  }
 
   viewFile(idGestion): Observable<any> {
     const httpOptions = {
@@ -89,6 +97,7 @@ export class MantenimientosDependenciaService {
   }
   
   updateDependencia(dependencia): Observable<any> {
+    console.log('actualizamos');
     return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'CreaDependencia/modSolicitudDependencia', dependencia)
       .pipe(
         catchError(this.handleError('updateDependencia', []))

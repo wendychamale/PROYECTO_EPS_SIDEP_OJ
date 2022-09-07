@@ -74,9 +74,10 @@ export class GestionesComponent implements OnInit {
         this.selected = '';
         this.filteredOptions = of([]);        
         this.gestiones = of([]);;
+        this.valProfile();
         this.loadGestiones();
         this.seleccionarTitulo();
-        this.valProfile();
+
       }
     );
 
@@ -106,43 +107,84 @@ export class GestionesComponent implements OnInit {
   valProfile(){
 // esto despues hay que quitarlo 
 
-this.viewSecretaria=true;
+this.viewSecretaria=false;
 this.viewPresidencia=false;
+this.viewUcpas = true;
+
 this.viewNominas = false;
-this.viewUcpas = false;
+
 this.viewCidej=false;
 this.viewCit=false;
 this.viewAdminUcpas = false;
 
     for(var i=0; i<this.session.PERFILES.length; i++){
-       if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
+     /*  if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
            this.viewNominas = true;
        }else if(this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL){
         this.viewUcpas = true;
       }else if(this.constantes.ADMIN_UCPAS == this.session.PERFILES[i].ID_PERFIL){
         this.viewAdminUcpas = true;
-      }
+      }*/
    }
   } 
 
   loadGestiones(){
-    this.mantenimientoDependenciaService.getGestiones(this.idEstado,0).subscribe(
-      data => {
-        if(data.length>0){
-        this.gestiones = data;
-        this.dataSource = new MatTableDataSource(this.gestiones);
-          
-      }else{ 
-        this.dataSource = new MatTableDataSource<any>();
-        let estado = this.idEstado == 1 ? "En solicitudes" : this.idEstado === 2 ? "Atendidas" : "Rechazadas";
-          swal("Gestiones Dependencias", "No se han encontrado gestiones " + estado, "info")
-        }
+    let verarea='todos';
+    if(this.viewPresidencia){
+    verarea='PRESIDENCIA';
+    }else  if(this.viewSecretaria){
+      verarea='SECRETARIA';
+      console.log('aqui s '+verarea);
+    }else  if(this.viewUcpas){
+      verarea='UCPAS';
+    }else {
+      verarea='todos';
 
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-          console.log("Gestiones sin data");
-      });
+    } 
+  console.log('se buscara datos por '+verarea);
+    if (verarea !='todos'){
+      this.mantenimientoDependenciaService.getGestionesArea(this.idEstado,0,verarea).subscribe(
+        data => {
+          if(data.length>0){ 
+          this.gestiones = data;
+          console.log(this.gestiones);
+         
+          this.dataSource = new MatTableDataSource(this.gestiones);
+            
+        }else{ 
+          this.dataSource = new MatTableDataSource<any>();
+          let estado = this.idEstado == 1 ? "En solicitudes" : this.idEstado === 2 ? "Atendidas" : "Rechazadas";
+            swal("Gestiones Dependencias", "No se han encontrado gestiones " + estado, "info")
+          }
+  
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+            console.log("Gestiones sin data");
+        });
+  
+    }else{
+      this.mantenimientoDependenciaService.getGestiones(this.idEstado,0,).subscribe(
+        data => {
+          if(data.length>0){ 
+          this.gestiones = data;
+          console.log(this.gestiones);
+         
+          this.dataSource = new MatTableDataSource(this.gestiones);
+            
+        }else{ 
+          this.dataSource = new MatTableDataSource<any>();
+          let estado = this.idEstado == 1 ? "En solicitudes" : this.idEstado === 2 ? "Atendidas" : "Rechazadas";
+            swal("Gestiones Dependencias", "No se han encontrado gestiones " + estado, "info")
+          }
+  
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+            console.log("Gestiones sin data");
+        });
+  
 
+    }
+   
 
   }
 
@@ -190,6 +232,9 @@ this.viewAdminUcpas = false;
 
   editar(item){
     this.router.navigate(['/mantenimientos/actualizar/'+item.ID_GESTION_DEPENDENCIA+'/'+item.ID_TIPO_GESTION+'/'+this.idEstado]);
+  }
+  crear2(item){
+    this.router.navigate(['/mantenimientos/creacion/'+item.ID_GESTION_DEPENDENCIA]);
   }
 
   rechazar(item):void{
@@ -379,8 +424,9 @@ this.viewAdminUcpas = false;
 
     
     modalDependencia(dataDep){
+      console.log(dataDep);
 
-      const dialogRef = this.dialog.open(ViewComponent, {
+     const dialogRef = this.dialog.open(ViewComponent, {
         width: '800px',
         height: '400',
         data: dataDep});
@@ -485,4 +531,6 @@ export function searchValidator(Services: any[]): ValidatorFn {
     
     return index < 0 ? { searchNames: { value: control.value } } : null;
   };
+
+
 }

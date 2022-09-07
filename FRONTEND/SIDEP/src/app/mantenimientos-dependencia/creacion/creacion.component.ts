@@ -27,6 +27,14 @@ interface Filex extends Blob {
   webkitRelativePath: string;
   observ: string;
 }
+interface Filex1 extends Blob {
+  lastModified: number;
+  //lastModifiedDate: Date;
+  name: string;
+ // webkitRelativePath: string;
+ // observ:string;
+  
+}
 
 @Component({
   selector: 'app-creacion',
@@ -54,13 +62,14 @@ export class CreacionComponent implements OnInit {
   checked = false;
   
   //Variables para verificar que usuario esta logueado
+  viewSecrePresi=false;
   viewSecretaria=false;
   viewPresidencia=false;
   viewNominas = false;
   viewUcpas = false;
   viewCidej=false;
   viewCit=false;
-  viewAdminUcpas = false;
+  viewAdmin= false;
 /* Controles */
   codDependencia;
   codPresupuestario;
@@ -79,7 +88,11 @@ export class CreacionComponent implements OnInit {
   referencia;
   inicioVigRef;
   chkRefVigencia;
-    
+  idGestion;
+  idGes;
+  idEstado;
+  idTipoGestion;
+  
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
     private router: Router,private route:ActivatedRoute
@@ -89,28 +102,79 @@ export class CreacionComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.creation = this.fb.group({
-      floatLabel: this.floatLabelControl,
-      codDependencia: ['', Validators.required],      
-      codPresupuestario: ['', Validators.required],      
-      nombreDep: ['', Validators.required],      
-      cortoDep: ['', Validators.required],      
-      gafeteDep: ['', Validators.required],      
-      documentoDep: ['', Validators.required],      
-      selConector: ['', Validators.required],      
-      selFuncionalidad: ['', Validators.required],      
-      selArea: ['', Validators.required],      
-      fechaAcuerdo: ['', Validators.required],      
-      inicioVigencia: ['', Validators.required],      
-      selDepartamento: ['', Validators.required],      
-      selMunicipio: ['', Validators.required],      
-      referencia: ['', Validators.required],
-      fechaPublicacion: [''],      
-      inicioVigRef: [''],
-      chkRefVigencia:['']      
-    });
-
+    this.idGes = this.route.snapshot.paramMap.get('id');
+    console.log("gestion"+this.idGes);
+    this.valProfile();
+    if(this.idGes!=null){
+     console.log("Llamar a gestion continuar creacion");
+     this.loadDependencia();
+    }
+     if(this.viewSecrePresi){
+      this.creation = this.fb.group({
+        floatLabel: this.floatLabelControl,
+        codDependencia: [''],      
+        codPresupuestario: [''],      
+        nombreDep: ['', Validators.required],      
+        cortoDep: ['', Validators.required],      
+        gafeteDep: ['', Validators.required],      
+        documentoDep: ['', Validators.required],      
+        selConector: [''],      
+        selFuncionalidad: [''],      
+        selArea: [''],      
+        fechaAcuerdo: ['', Validators.required],      
+        inicioVigencia: [''],      
+        selDepartamento: [''],      
+        selMunicipio: [''],      
+        referencia: [''],
+        fechaPublicacion: [''],      
+        inicioVigRef: [''],
+        chkRefVigencia:['']      
+      }); 
+     } else if(this.viewUcpas){
+      console.log("creation de ucpas");
+      this.creation = this.fb.group({
+        floatLabel: this.floatLabelControl,
+        codDependencia: ['', Validators.required],      
+        codPresupuestario: ['', Validators.required],      
+        nombreDep: [''],      
+        cortoDep: [''],      
+        gafeteDep: [''],      
+        documentoDep: [''],      
+        selConector: ['', Validators.required],      
+        selFuncionalidad: ['', Validators.required],      
+        selArea: ['', Validators.required],      
+        fechaAcuerdo: [''],      
+        inicioVigencia: ['', Validators.required],      
+        selDepartamento: ['', Validators.required],      
+        selMunicipio: ['', Validators.required],      
+        referencia: ['', Validators.required],
+        fechaPublicacion: [''],      
+        inicioVigRef: [''],
+        chkRefVigencia:['']      
+      }); 
+     }else {
+      this.creation = this.fb.group({
+        floatLabel: this.floatLabelControl,
+        codDependencia: ['', Validators.required],      
+        codPresupuestario: ['', Validators.required],      
+        nombreDep: ['', Validators.required],      
+        cortoDep: ['', Validators.required],      
+        gafeteDep: ['', Validators.required],      
+        documentoDep: ['', Validators.required],      
+        selConector: ['', Validators.required],      
+        selFuncionalidad: ['', Validators.required],      
+        selArea: ['', Validators.required],      
+        fechaAcuerdo: ['', Validators.required],      
+        inicioVigencia: ['', Validators.required],      
+        selDepartamento: ['', Validators.required],      
+        selMunicipio: ['', Validators.required],      
+        referencia: ['', Validators.required],
+        fechaPublicacion: [''],      
+        inicioVigRef: [''],
+        chkRefVigencia:['']      
+      }); 
+     }
+    
     this.creation.get('codDependencia').valueChanges.subscribe((v)=> {if(v.length > 3){this.iniciaValDep = true }else{this.iniciaValDep = false}} );
     this.creation.get('codPresupuestario').valueChanges.subscribe((v)=> {if(v.length > 3){this.iniciaValPres = true }else{this.iniciaValPres = false}});
 
@@ -123,7 +187,8 @@ export class CreacionComponent implements OnInit {
       data => {
         this.listArea = data;
       });
-      this.valProfile();
+      
+     
   }
 
   listFuncionalidad: Funcionalidad[] = [
@@ -139,87 +204,34 @@ export class CreacionComponent implements OnInit {
   
   valProfile(){
     // esto despues hay que quitarlo 
-    
-    this.viewSecretaria=true;
+    this.viewSecretaria=false;
     this.viewPresidencia=false;
+    this.viewUcpas = true;
     this.viewNominas = false;
-    this.viewUcpas = false;
     this.viewCidej=false;
     this.viewCit=false;
-    this.viewAdminUcpas =false;
-    
-    if(this.viewSecretaria || this.viewPresidencia){
-      console.log("Presidencia,Secretaria");
-      this.creation.controls['nombreDep'].enable();
-      this.creation.controls['cortoDep'].enable();
-      this.creation.controls['gafeteDep'].enable();
-      this.creation.controls['documentoDep'].enable();
-      this.creation.controls['fechaAcuerdo'].enable();
-      this.creation.controls['inicioVigencia'].enable();
-      this.creation.controls['fechaPublicacion'].enable();
+    this.viewAdmin =false;
 
-      this.creation.controls['codDependencia'].disable();
-      this.creation.controls['codPresupuestario'].disable();
-      this.creation.controls['selConector'].disable();
-      this.creation.controls['selFuncionalidad'].disable();
-      this.creation.controls['selArea'].disable();
-      this.creation.controls['selDepartamento'].disable();
-      this.creation.controls['selMunicipio'].disable();
-      this.creation.controls['referencia'].disable();
-      this.creation.controls['inicioVigRef'].disable();
-      this.creation.controls['chkRefVigencia'].disable();     
-    }
-    if(this.viewUcpas){
-      console.log("UCPAS");
-      this.creation.controls['codDependencia'].enable();
-      this.creation.controls['codPresupuestario'].enable();
-      this.creation.controls['selConector'].enable();
-      this.creation.controls['selFuncionalidad'].enable();
-      this.creation.controls['selArea'].enable();
-      this.creation.controls['selMunicipio'].enable();
-      this.creation.controls['referencia'].enable();
-      this.creation.controls['selDepartamento'].enable();
+  if(this.viewSecretaria|| this.viewPresidencia){
+    this.viewSecrePresi=true;
+  }
+  if(this.viewAdmin){
+    this.viewSecrePresi=true;
+    this.viewUcpas = true;
+  }
 
-      this.creation.controls['nombreDep'].disable();
-      this.creation.controls['inicioVigencia'].disable();
-      this.creation.controls['cortoDep'].disable();
-      this.creation.controls['gafeteDep'].disable();
-      this.creation.controls['documentoDep'].disable();
-      this.creation.controls['fechaAcuerdo'].disable();
-      this.creation.controls['fechaPublicacion'].disable();
-      this.creation.controls['inicioVigRef'].disable();
-      this.creation.controls['chkRefVigencia'].disable();   
-    }
-
-    if(this.viewAdminUcpas){
-      console.log("admin UCPAS");
-      this.creation.controls['codDependencia'].enable();
-      this.creation.controls['codPresupuestario'].enable();
-      this.creation.controls['selConector'].enable();
-      this.creation.controls['selFuncionalidad'].enable();
-      this.creation.controls['selArea'].enable();
-      this.creation.controls['selMunicipio'].enable();
-      this.creation.controls['referencia'].enable();
-      this.creation.controls['selDepartamento'].enable();
-
-      this.creation.controls['nombreDep'].enable();
-      this.creation.controls['inicioVigencia'].enable();
-      this.creation.controls['cortoDep'].enable();
-      this.creation.controls['gafeteDep'].enable();
-      this.creation.controls['documentoDep'].enable();
-      this.creation.controls['fechaAcuerdo'].enable();
-      this.creation.controls['fechaPublicacion'].enable();
-      this.creation.controls['inicioVigRef'].enable();
-      this.creation.controls['chkRefVigencia'].enable();   
-    }
+  if(this.viewCidej || this.viewCit||this.viewNominas){
+    this.viewSecrePresi=false;
+    this.viewUcpas = false;
+  }
         for(var i=0; i<this.session.PERFILES.length; i++){
-           if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
+        /*   if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
                this.viewNominas = true;
            }else if(this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL){
             this.viewUcpas = true;
           }else if(this.constantes.ADMIN_UCPAS == this.session.PERFILES[i].ID_PERFIL){
             this.viewAdminUcpas = true;
-          }
+          }*/
        }
       } 
 
@@ -285,13 +297,22 @@ export class CreacionComponent implements OnInit {
 
 
   crearDependencia(){
-   let area=1;
-
+   let area=0;
+   let area1="";
    if (this.viewPresidencia){
+        //Area 2 representa a que es un area Administrativa
     area=2;
+    area1="UCPAS"
+   }else if (this.viewSecretaria){
+        //Area 1 representa a que es un area Judicial
+    area=1;
+    area1="UCPAS"
+   }else {
+    area=this.creation.value.selArea;
+    area1="UCPAS"
    }
-    console.log("Entramos a crear dependencia ");
-    if (this.viewPresidencia || this.viewSecretaria){
+
+    console.log("Entramos a crear dependencia "+ area);
       let dependencia={
         CODIGO_DEPENDENCIA:null,
         CODIGO_PRESUPUESTARIO:null,
@@ -305,7 +326,7 @@ export class CreacionComponent implements OnInit {
         FECHA_ANULACION:"",
         FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
         OBS_FECHA_VIGENCIA:'',
-        PROCESO_ESTADO_AREA:'UCPAS',
+        PROCESO_ESTADO_AREA:area1,
         REFERENCIA:'',
         FUNCION_UNIDAD:'',
         DEPARTAMENTO:null,
@@ -335,56 +356,6 @@ export class CreacionComponent implements OnInit {
           );
         });    
       }
-    }
-   
-    if (this.viewUcpas){
-      let dependencia={
-    
-
-        CODIGO_DEPENDENCIA:this.creation.value.codDependencia,
-        CODIGO_PRESUPUESTARIO:this.creation.value.codPresupuestario,
-        NOMBRE_DEPENDENCIA:this.creation.value.nombreDep.toUpperCase(),
-        NOMBRE_GAFETE:this.creation.value.gafeteDep.toUpperCase(),
-        NOMBRE_ABREVIADO:this.creation.value.cortoDep.toUpperCase(),
-        NOMBRE_DOCUMENTO:this.creation.value.documentoDep.toUpperCase(),
-        CONECTOR:this.creation.value.selConector,
-        FECHA_DEL_ACUERDO:this.datePipe.transform(this.creation.value.fechaAcuerdo, 'dd/MM/yyyy'),
-        FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.creation.value.inicioVigencia, 'dd/MM/yyyy'),     
-        FECHA_ANULACION:"",
-        FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
-        OBS_FECHA_VIGENCIA:this.creation.value.inicioVigRef.toUpperCase(),
-        REFERENCIA:this.creation.value.referencia.toUpperCase(),
-        FUNCION_UNIDAD:this.creation.value.selFuncionalidad,
-        DEPARTAMENTO:this.creation.value.selDepartamento,
-        MUNICIPIO:this.creation.value.selMunicipio,
-        TIPO_AREA:this.creation.value.selArea,
-        IP:"",
-        ID_USUARIO_REGISTRO:this.session.ID_USUARIO,
-        ARCHIVO:"",
-        NOMBRE_ARCHIVO:"",
-        ID_SOLICITUD:""
-       }
-
-       if(this.files.length!=0){
-        this.files.forEach(element => {   
-          this.getBase64(element).then(
-            data => {
-  
-              if(data){
-  
-                dependencia.NOMBRE_ARCHIVO = element.name;
-                dependencia.ARCHIVO = data.toString();
-                console.log("objeto " + dependencia); 
-                this.saveDependencia(dependencia);
-  
-              }
-            }
-          );
-        });    
-      }
-    }
-
-  
 
   }
 
@@ -469,7 +440,8 @@ export class CreacionComponent implements OnInit {
 
   /* upload file*/
   accept = '*'
-  files: Filex[] = []
+  //files: Filex[] = []
+  files: Filex1[] = []
   progress: number
   hasBaseDropZoneOver: boolean = false
   httpEmitter: Subscription
@@ -478,6 +450,9 @@ export class CreacionComponent implements OnInit {
 
   sendableFormData: FormData//populated via ngfFormData directive 
    
+
+
+
   cancel() {
     this.progress = 0
     if (this.httpEmitter) {
@@ -508,4 +483,131 @@ export class CreacionComponent implements OnInit {
     this.router.navigate(['/mantenimientos/gestiones/1']);
   }
   
+  loadDependencia(){
+    this.mantenimientoDependenciaService.getGestDependencia(this.idGes).subscribe(
+      data => {
+        this.asignarData(data[0]);
+       
+      });
+}
+asignarData(data){
+
+ // this.creation.controls['chkRefVigencia'].disable();     
+
+  this.creation.controls.codDependencia.setValue(data.CODIGO_DEPENDENCIA!=null ? data.CODIGO_DEPENDENCIA:"");
+  this.creation.controls.codPresupuestario.setValue(data.CODIGO_PRESUPUESTARIO!=null ? data.CODIGO_PRESUPUESTARIO:"");
+  this.creation.controls.nombreDep.setValue(data.NOMBRE_DEPENDENCIA!=null ? data.NOMBRE_DEPENDENCIA:""); 
+  this.creation.controls.cortoDep.setValue(data.NOMBRE_ABREVIADO!=null ? data.NOMBRE_ABREVIADO:"" );
+  this.creation.controls.gafeteDep.setValue(data.NOMBRE_GAFETE!=null ? data.NOMBRE_GAFETE:"");
+  this.creation.controls.documentoDep.setValue(data.NOMBRE_DOCUMENTO !=null ? data.NOMBRE_DOCUMENTO:"");
+  this.creation.controls.selConector.setValue(data.CONECTOR!=null ? data.CONECTOR.trim().toUpperCase():"");
+  this.creation.controls.fechaAcuerdo.setValue(data.FECHA_DEL_ACUERDO.length > 0 ? new Date(data.FECHA_DEL_ACUERDO) : ""); 
+  this.creation.controls.referencia.setValue(data.REFERENCIA!=null ? data.REFERENCIA:"");
+  this.creation.controls.selFuncionalidad.setValue(data.FUNCION_UNIDAD!=null ? (data.FUNCION_UNIDAD == 'N' ? 'JORNADA' : 'TURNO'):"");
+  this.creation.controls.selDepartamento.setValue(data.DEPARTAMENTO!=null ?data.DEPARTAMENTO:"" );
+  //this.idDepto = data.DEPARTAMENTO;
+ // this.creation.controls.municipioDep.setValue(data.NOMBRE_MUNICIPIO);
+  this.creation.controls.selMunicipio.setValue(data.MUNICIPIO!=null ?data.MUNICIPIO:"");
+  this.creation.controls.selArea.setValue(data.TIPO_AREA!=null?data.TIPO_AREA:"");
+  //this.creation.controls.areaDep.setValue(data.NOMBRE_AREA);
+  this.idGestion = data.ID_GESTION_DEPENDENCIA;
+ //this.observaciones = data.OBSERVACIONES;
+
+  var nameFile = this.nombreArchivo(data.ACUERDO_DIGITAL);
+  this.archivo(nameFile,this.idGestion);
+
+  this.creation.controls.inicioVigencia.setValue(data.FECHA_ENTRA_VIGENCIA.length > 0 ? new Date(data.FECHA_ENTRA_VIGENCIA) : "");    
+ // this.creation.controls.inicioDep.setValue(data.FECHA_ENTRA_VIGENCIA.length > 0 ? this.datePipe.transform(data.FECHA_ENTRA_VIGENCIA, 'dd/MM/yyyy') : "");    
+  this.creation.controls.fechaPublicacion.setValue(data.FECHA_PUBLICACION.length > 0 ? new Date(data.FECHA_PUBLICACION) : ""); 
+ // this.creation.controls.publicaDep.setValue(data.FECHA_PUBLICACION.length > 0 ? this.datePipe.transform(data.FECHA_PUBLICACION, 'dd/MM/yyyy') : ""); 
+  this.creation.controls.chkRefVigencia.setValue(data.OBS_FECHA_VIGENCIA!=null ?data.OBS_FECHA_VIGENCIA:"");
+
+ // this.checked = data.FECHA_ENTRA_VIGENCIA.length == 0;
+
+  console.log('datos'+data);
+
+}
+
+nombreArchivo(ruta){
+  var dataRuta = ruta.split("/");
+  
+  return dataRuta.length > 0 ? dataRuta[dataRuta.length - 1] : null;
+}
+archivo(nombre,id){
+
+  let savedFile :Filex1; 
+ 
+
+  this.mantenimientoDependenciaService.viewFile(id).subscribe(
+    data => {      
+      let blob: Blob = new Blob([data.body], { type: 'application/pdf'});
+      
+      var b = new File([blob],nombre, { type: 'application/pdf'});
+      
+      this.files.push(b);
+  
+    });    
+
+}
+
+//implementamos nuevos metodos para seguir con la creacion de una dependencia
+CrearDependencia1(){
+console.log("Crear dependencia continuacion.....");
+  let dependencia={
+  
+   ID_GESTION_DEPENDENCIA: this.idGestion,
+   CODIGO_DEPENDENCIA:this.creation.value.codDependencia,
+   CODIGO_PRESUPUESTARIO:this.creation.value.codPresupuestario,
+   NOMBRE_DEPENDENCIA:this.creation.value.nombreDep.toUpperCase(),
+   FECHA_ANULACION: null,
+   REFERENCIA:this.creation.value.referencia.toUpperCase(),
+   ID_USUARIO_REGISTRO:this.session.ID_USUARIO,
+   IP:"",
+   ARCHIVO:"",
+   NOMBRE_ARCHIVO:"",     
+   NOMBRE_GAFETE:this.creation.value.gafeteDep.toUpperCase(),
+   NOMBRE_ABREVIADO:this.creation.value.cortoDep.toUpperCase(),
+   NOMBRE_DOCUMENTO:this.creation.value.documentoDep.toUpperCase(),
+   CONECTOR:this.creation.value.selConector,
+   FECHA_DEL_ACUERDO:this.datePipe.transform(this.creation.value.fechaAcuerdo, 'dd/MM/yyyy'),
+   FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.creation.value.inicioVigencia, 'dd/MM/yyyy'),
+   FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
+   OBS_FECHA_VIGENCIA:this.creation.value.inicioVigRef.toUpperCase(),
+   FUNCION_UNIDAD:this.creation.value.selFuncionalidad,
+   DEPARTAMENTO:this.creation.value.selDepartamento,
+   MUNICIPIO:this.creation.value.selMunicipio,
+   TIPO_AREA:this.creation.value.selArea,
+   ID_SOLICITUD:""
+   }    
+  console.log(dependencia);
+  if(this.files.length>0){
+    this.files.forEach(element => {   
+      this.getBase64(element).then(
+        data => {
+
+          if(data){
+
+            dependencia.NOMBRE_ARCHIVO = element.name;
+            dependencia.ARCHIVO = data.toString();
+            this.updateDependencia(dependencia);
+
+          }
+        }
+      );
+    });    
+  }
+
+}
+updateDependencia(dependencia){
+  console.log("entramos a terminar de crear una dependencia")
+  this.mantenimientoDependenciaService.updateDependencia(dependencia).subscribe(
+    data=>{
+      if(data.result=='OK'){
+       swal("Dependencia Creada Exitosamente", data.msj, "success")
+       this.router.navigate(['/mantenimientos/gestiones/1']);
+      }else{
+       swal("Error", data.msj, "error")
+     }
+    })
+}
 }
