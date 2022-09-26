@@ -116,8 +116,8 @@ export class CreacionComponent implements OnInit {
         codDependencia: [''],      
         codPresupuestario: [''],      
         nombreDep: ['', Validators.required],      
-        cortoDep: ['', Validators.required],      
-        gafeteDep: ['', Validators.required],      
+        cortoDep: [''],      
+        gafeteDep: [''],      
         documentoDep: ['', Validators.required],      
         selConector: [''],      
         selFuncionalidad: [''],      
@@ -138,8 +138,8 @@ export class CreacionComponent implements OnInit {
         codDependencia: ['', Validators.required],      
         codPresupuestario: ['', Validators.required],      
         nombreDep: [''],      
-        cortoDep: [''],      
-        gafeteDep: [''],      
+        cortoDep: ['', Validators.required],      
+        gafeteDep: ['', Validators.required],      
         documentoDep: [''],      
         selConector: ['', Validators.required],      
         selFuncionalidad: ['', Validators.required],      
@@ -205,9 +205,9 @@ export class CreacionComponent implements OnInit {
   
   valProfile(){
     // esto despues hay que quitarlo 
-    this.viewSecretaria=true;
+    this.viewSecretaria=false;
     this.viewPresidencia=false;
-    this.viewUcpas = false;
+    this.viewUcpas = true;
     this.viewNominas = false;
     this.viewCidej=false;
     this.viewCit=false;
@@ -615,5 +615,22 @@ updateDependencia(dependencia){
        swal("Error", data.msj, "error")
      }
     })
+}
+
+
+
+viewPdf(nombre){
+  this.mantenimientoDependenciaService.viewFile(this.idGes).subscribe(
+    data => {
+    
+      let blob: Blob = new Blob([data.body], { type: 'application/pdf' });
+      var fileURL = window.URL.createObjectURL(blob);
+      
+      let pdfWindow = window.open("");
+      pdfWindow.document.write("<iframe  width='100%' height='100%' src='" + fileURL+"'></iframe>")
+      //pdfWindow.document.write(fileURL);
+      pdfWindow.document.title = "Acuerdo " + nombre;
+      
+    });
 }
 }

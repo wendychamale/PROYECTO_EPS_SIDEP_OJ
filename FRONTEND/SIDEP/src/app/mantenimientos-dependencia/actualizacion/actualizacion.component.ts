@@ -58,7 +58,7 @@ export class ActualizacionComponent implements OnInit {
   observaciones;
   validaFechaPublica = false;
   checked = false;
-  opcion='';
+ 
   /* Controles */
   codDependencia;
   codPresupuestario;
@@ -86,17 +86,20 @@ export class ActualizacionComponent implements OnInit {
   publicaDep;
   chkRefVigencia;
   inicioVigRef;
- //Variables para verificar que usuario esta logueado
- viewSecretaria=false;
- viewPresidencia=false;
- viewNominas = false;
- viewUcpas = false;
- viewCidej=false;
- viewCit=false;
- viewAdminUcpas = false;
+  areaSiguiente;
+
   //Manejo de controles
   controlsLectura = [];
-  controlsLecturarol =[] ;
+    //Variables para verificar que usuario esta logueado
+    viewSecrePresi=false;
+    viewSecretaria=false;
+    viewPresidencia=false;
+    viewNominas = false;
+    viewUcpas = false;
+    viewCidej=false;
+    viewCit=false;
+    viewAdmin= false;
+
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
     private router: Router,private route:ActivatedRoute
@@ -109,30 +112,65 @@ export class ActualizacionComponent implements OnInit {
     this.idGes = this.route.snapshot.paramMap.get('id');
     this.idTipoGestion = this.route.snapshot.paramMap.get('idTipoGestion');
     this.idEstado = this.route.snapshot.paramMap.get('idEstado');
-
+    this.valProfile();
+    //Datos obligatorios segun el rol
+    
+    if(this.viewSecrePresi){
+   
+      this.update = this.fb.group({
+        floatLabel: this.floatLabelControl,
+        codDependencia: [''],      
+        codPresupuestario: [''],      
+        nombreDep: ['', Validators.required],      
+        cortoDep: [''],      
+        gafeteDep: [''],      
+        documentoDep: ['', Validators.required],      
+        selConector: [''],      
+        conectorDep: [''],      
+        selFuncionalidad: [''],      
+        funcionDep: [''],      
+        selArea: [''],      
+        areaDep: [''],      
+        fechaAcuerdo: ['', Validators.required],      
+        acuerdoDep: ['', Validators.required],      
+        selDepartamento: [''],      
+        departamentoDep: [''],      
+        selMunicipio: [''],      
+        municipioDep: [''],      
+        referencia: [''],      
+        fechaAnulacion: [''],      
+        inicioVigencia: [''],      
+        inicioDep: [''],      
+        fechaPublicacion: [''],      
+        publicaDep: [''],      
+        inicioVigRef: [''],
+        chkRefVigencia:['']      
+      }); 
+     } else if(this.viewUcpas){
+      console.log("creation de ucpas");
+      
     this.update = this.fb.group({
       floatLabel: this.floatLabelControl,
-     codDependencia: ['', Validators.required],      
+      codDependencia: ['', Validators.required],      
       codPresupuestario: ['', Validators.required],      
-       nombreDep: ['', Validators.required],      
+      nombreDep: [''],      
       cortoDep: ['', Validators.required],      
       gafeteDep: ['', Validators.required],      
-      documentoDep: ['', Validators.required],      
+      documentoDep: [''],      
       selConector: ['', Validators.required],      
-      conectorDep: ['',Validators.required],      
-      selFuncionalidad: ['',Validators.required],      
+      conectorDep: ['', Validators.required],      
+      selFuncionalidad: ['', Validators.required],      
       funcionDep: ['', Validators.required],      
       selArea: ['', Validators.required],      
       areaDep: ['', Validators.required],      
-      fechaAcuerdo: ['', Validators.required],      
-      acuerdoDep: ['', Validators.required],      
+      fechaAcuerdo: [''],      
+      acuerdoDep: [''],      
       selDepartamento: ['', Validators.required],      
       departamentoDep: ['', Validators.required],      
       selMunicipio: ['', Validators.required],      
       municipioDep: ['', Validators.required],      
       referencia: ['', Validators.required],      
-     /* fechaAnulacion: ['', Validators.required],    */                       
-      fechaAnulacion: [''],   
+      fechaAnulacion: ['', Validators.required],      
       inicioVigencia: [''],      
       inicioDep: [''],      
       fechaPublicacion: [''],      
@@ -141,13 +179,45 @@ export class ActualizacionComponent implements OnInit {
       chkRefVigencia:['']      
     });
 
+     }else {
+      this.update = this.fb.group({
+        floatLabel: this.floatLabelControl,
+        codDependencia: ['', Validators.required],      
+        codPresupuestario: ['', Validators.required],      
+        nombreDep: ['', Validators.required],      
+        cortoDep: ['', Validators.required],      
+        gafeteDep: ['', Validators.required],      
+        documentoDep: ['', Validators.required],      
+        selConector: ['', Validators.required],      
+        conectorDep: ['', Validators.required],      
+        selFuncionalidad: ['', Validators.required],      
+        funcionDep: ['', Validators.required],      
+        selArea: ['', Validators.required],      
+        areaDep: ['', Validators.required],      
+        fechaAcuerdo: ['', Validators.required],      
+        acuerdoDep: ['', Validators.required],      
+        selDepartamento: ['', Validators.required],      
+        departamentoDep: ['', Validators.required],      
+        selMunicipio: ['', Validators.required],      
+        municipioDep: ['', Validators.required],      
+        referencia: ['', Validators.required],      
+        fechaAnulacion: ['', Validators.required],      
+        inicioVigencia: [''],      
+        inicioDep: [''],      
+        fechaPublicacion: [''],      
+        publicaDep: [''],      
+        inicioVigRef: [''],
+        chkRefVigencia:['']      
+      });
+     }
+
+
+
     this.update.get('codDependencia').valueChanges.subscribe((v)=> {if(v.length > 3){this.iniciaValDep = true }else{this.iniciaValDep = false}} );
     this.update.get('codPresupuestario').valueChanges.subscribe((v)=> {if(v.length > 3){this.iniciaValPres = true }else{this.iniciaValPres = false}});
     
     this.loadDependencia();
-    this.valProfile();
-   // this.asignarControles();    se comenta solo por que me da duda
-
+    this.asignarControles();
 
     this.mantenimientoDependenciaService.getListaDepartamento().subscribe(
       data => {
@@ -161,30 +231,6 @@ export class ActualizacionComponent implements OnInit {
 
   }
 
-  
-  valProfile(){
-    // esto despues hay que quitarlo 
-    
-    this.viewSecretaria=false;
-    this.viewPresidencia=false;
-    this.viewUcpas = true;
-    this.viewNominas = false;
-    this.viewCidej=false;
-    this.viewCit=false;
-    this.viewAdminUcpas =false;
-       for(var i=0; i<this.session.PERFILES.length; i++){
-        /*   if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
-               this.viewNominas = true;
-           }else if(this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL){
-            this.viewUcpas = true;
-          }else if(this.constantes.ADMIN_UCPAS == this.session.PERFILES[i].ID_PERFIL){
-            this.viewAdminUcpas = true;
-          }*/
-       }
-      } 
-
-  
-
 
   listFuncionalidad: Funcionalidad[] = [
     { value: 'T', viewValue: 'TURNO' },
@@ -197,15 +243,50 @@ export class ActualizacionComponent implements OnInit {
     { value: 'DE LA', viewValue: 'DE LA' }
   ];
 
+  valProfile(){
+    // esto despues hay que quitarlo 
+    this.viewSecretaria=false;
+    this.viewPresidencia=false;
+    this.viewUcpas = true;
+    this.viewNominas = false;
+    this.viewCidej=false;
+    this.viewCit=false;
+    this.viewAdmin =false;
+
+  if(this.viewSecretaria|| this.viewPresidencia){
+    this.viewSecrePresi=true;
+    this.areaSiguiente='UCPAS';
+  }
+  if (this.viewUcpas){
+    this.areaSiguiente='NOMINAS';
+  }
+  if(this.viewAdmin){
+    this.viewSecrePresi=true;
+    this.viewUcpas = true;
+  }
+
+  if(this.viewCidej || this.viewCit||this.viewNominas){
+    this.viewSecrePresi=false;
+    this.viewUcpas = false;
+  }
+        for(var i=0; i<this.session.PERFILES.length; i++){
+        /*   if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
+               this.viewNominas = true;
+           }else if(this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL){
+            this.viewUcpas = true;
+          }else if(this.constantes.ADMIN_UCPAS == this.session.PERFILES[i].ID_PERFIL){
+            this.viewAdminUcpas = true;
+          }*/
+       }
+      } 
   viewAnulacion(){
     return this.idTipoGestion == 4;
   }
 
   asignarControles(){
-console.log(this.idTipoGestion);
 
     if(this.idTipoGestion == 1){
-     this.controlsLectura.push('codDependencia');
+      this.controlsLectura.push('codDependencia');
       this.controlsLectura.push('codPresupuestario');
       this.controlsLectura.push('selArea');
       this.controlsLectura.push('selFuncionalidad');
@@ -261,36 +342,19 @@ console.log(this.idTipoGestion);
       this.controlsLectura.push('acuerdoDep');
       this.update.controls.fechaAnulacion.setValidators(Validators.required);
       }
+
+
   }
 
   loadDependencia(){
       this.mantenimientoDependenciaService.getGestDependencia(this.idGes).subscribe(
         data => {
           this.asignarData(data[0]);
-         
         });
   }
 
-  capturar(conect){
-    this.conectorDep=conect;
-    this.update.controls.conectorDep.setValue(conect);
- console.log(this.conectorDep);
-
-  }
-  capturar1(conect){
-    this.areaDep=conect;
-    this.update.controls.selFuncionalidad.setValue(conect);
-  }
-  capturar2(conect){
-    this.funcionDep=conect;
-    this.update.controls.selArea.setValue(conect);
-  }
-  
-  capturarmuni(conect:any , nombre:any){
-    this.update.controls.municipioDep.setValue(nombre);
-    this.update.controls.selMunicipio.setValue(conect);
-  }
   asignarData(data){
+
     this.update.controls.codDependencia.setValue(data.CODIGO_DEPENDENCIA);
     this.update.controls.codPresupuestario.setValue(data.CODIGO_PRESUPUESTARIO);
     this.update.controls.nombreDep.setValue(data.NOMBRE_DEPENDENCIA); 
@@ -326,14 +390,6 @@ console.log(this.idTipoGestion);
     this.update.controls.inicioVigRef.setValue(data.OBS_FECHA_VIGENCIA);
 
     this.checked = data.FECHA_ENTRA_VIGENCIA.length == 0;
-
-    if(data.CODIGO_DEPENDENCIA==''){
-      this.opcion='Insertar';
-    }else{
-      this.opcion='Editar';
-    }
-    console.log('datos'+data.CODIGO_DEPENDENCIA);
-    console.log('opcion'+this.opcion);
   }
 
   nombreArchivo(ruta){
@@ -382,13 +438,14 @@ console.log(this.idTipoGestion);
      FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.update.value.inicioVigencia, 'dd/MM/yyyy'),
      FECHA_PUBLICACION:this.datePipe.transform(this.update.value.fechaPublicacion, 'dd/MM/yyyy'),
      OBS_FECHA_VIGENCIA:this.update.value.inicioVigRef.toUpperCase(),
+     PROCESO_ESTADO_AREA: this.areaSiguiente,
      FUNCION_UNIDAD:this.update.value.selFuncionalidad,
      DEPARTAMENTO:this.update.value.selDepartamento,
      MUNICIPIO:this.update.value.selMunicipio,
      TIPO_AREA:this.update.value.selArea,
      ID_SOLICITUD:""
      }    
-    console.log(dependencia);
+
     if(this.files.length>0){
       this.files.forEach(element => {   
         this.getBase64(element).then(
@@ -409,6 +466,9 @@ console.log(this.idTipoGestion);
   }
 
   actualizar(dependencia){
+ 
+    
+    
 
     if(this.idTipoGestion==1){
       this.updateDependencia(dependencia) 
@@ -426,7 +486,6 @@ console.log(this.idTipoGestion);
   }
 
   updateDependencia(dependencia){
-    console.log("entramos a actualizar")
     this.mantenimientoDependenciaService.updateDependencia(dependencia).subscribe(
       data=>{
         if(data.result=='OK'){
@@ -475,11 +534,7 @@ console.log(this.idTipoGestion);
       })
   }
   
-  getMunicipio(event: any, valDepto: number,nombre:any) {
-    console.log(valDepto+"e:"+nombre);
-    this.update.controls.departamentoDep.setValue(nombre);
-    this.update.controls.selDepartamento.setValue(valDepto);
-
+  getMunicipio(event: any, valDepto: number) {
     if (event.isUserInput) {
 
       if(valDepto !== this.idDepto){
@@ -665,10 +720,8 @@ console.log(this.idTipoGestion);
     this.router.navigate(['/mantenimientos/gestiones/'+this.idEstado]);
   }
   
-  loadHabilitados(control){
-    console.log("load"+control+this.controlsLectura.indexOf(control) +":"+(this.controlsLectura.indexOf(control) != -1));    
+  loadHabilitados(control){    
      return this.controlsLectura.indexOf(control) != -1;  
-  // return true;
   }
 
 }

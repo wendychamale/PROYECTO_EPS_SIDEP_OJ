@@ -45,7 +45,7 @@
           <div class="=col-md-6 mx-auto mt-5 ">
             <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
               <div class="row row-cols-2">
-                <div class="form-group col">
+                <div *ngIf="this.viewUcpas || this.creation.controls.codDependencia==''" class="form-group col">
                   
                   <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                     <input   matInput formControlName="codDependencia" type="text" placeholder="Código Dependencia" (ngModelChange)="valCodDep($event)" [readonly]="!this.viewUcpas">
@@ -57,7 +57,7 @@
                     </mat-hint>
                   </mat-form-field>
                 </div>
-                <div class="form-group col">
+                <div *ngIf="this.viewUcpas || this.creation.controls.codPresupuestario==''" class="form-group col">
                   <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                     <input matInput formControlName="codPresupuestario" type="text" maxlength="5" placeholder="Código Presupuestario" (ngModelChange)="valCodPres($event)" [readonly]="!this.viewUcpas">
                     <mat-error *ngIf="this.creation.controls.codPresupuestario.errors?.required">
@@ -81,24 +81,6 @@
             </div>
             <div class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                <input matInput formControlName="cortoDep" class="textos" type="text" maxlength="50" placeholder="Nombre Corto" [readonly]="!viewSecrePresi">
-                <mat-error *ngIf="this.creation.controls.cortoDep.errors?.required">
-                  Nombre Abreviado Requerido
-                </mat-error>
-                <mat-hint align="end">{{f.cortoDep.value.length}} / 50</mat-hint>
-              </mat-form-field>
-            </div>
-            <div class="form-group">
-              <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                <input matInput formControlName="gafeteDep" class="textos" type="text" maxlength="60" placeholder="Nombre Gafete" [readonly]="!viewSecrePresi">
-                <mat-error *ngIf="this.creation.controls.gafeteDep.errors?.required">
-                  Nombre Gafete Requerido
-                </mat-error>
-                <mat-hint align="end">{{f.gafeteDep.value.length}} / 60</mat-hint>
-              </mat-form-field>
-            </div>
-            <div class="form-group">
-              <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                 <input matInput formControlName="documentoDep" class="textos" type="text" maxlength="1024" placeholder="Nombre Documento"
                   [readonly]="!viewSecrePresi">
                 <mat-error *ngIf="this.creation.controls.documentoDep.errors?.required">
@@ -107,40 +89,25 @@
                 <mat-hint align="end">{{f.documentoDep.value.length}} / 1024</mat-hint>
               </mat-form-field>
             </div>
-            <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
-              <div class="row row-cols-3">
-                <div class="col" >
-                  <mat-form-field >
-                    <mat-select placeholder="CONECTOR" formControlName="selConector" [disabled]="!this.viewUcpas" >
-                      <mat-option *ngFor="let conector of listConector" [value]="conector.value" style="font-size: 12px;">{{conector.viewValue}}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="this.creation.controls.selConector.errors?.required">
-                      CONECTOR REQUERIDO
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div class="col">
-                  <mat-form-field>
-                    <mat-select placeholder="FUNCIONALIDAD" formControlName="selFuncionalidad" [disabled]="!this.viewUcpas" >
-                      <mat-option *ngFor="let funcionalidad of listFuncionalidad" [value]="funcionalidad.value" style="font-size: 12px;">{{funcionalidad.viewValue}}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="this.creation.controls.selFuncionalidad.errors?.required">
-                      FUNCIONALIDAD REQUERIDO
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div class="col">
-                  <mat-form-field>
-                    <mat-select placeholder="AREA" formControlName="selArea" [disabled]="!this.viewUcpas" >
-                      <mat-option *ngFor="let area of listArea" [value]="area.ID_AREA" style="font-size: 12px;">{{area.NOMBRE_AREA}}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="this.creation.controls.selArea.errors?.required">
-                      AREA REQUERIDO
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-              </div>
+            <div  *ngIf="this.viewUcpas || this.creation.controls.cortoDep==''" class="form-group">
+              <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
+                <input matInput formControlName="cortoDep" class="textos" type="text" maxlength="50" placeholder="Nombre Corto" [readonly]="!this.viewUcpas">
+                <mat-error *ngIf="this.creation.controls.cortoDep.errors?.required">
+                  Nombre Abreviado Requerido
+                </mat-error>
+                <mat-hint align="end">{{f.cortoDep.value.length}} / 50</mat-hint>
+              </mat-form-field>
             </div>
+            <div *ngIf="this.viewUcpas || this.creation.controls.gafeteDep==''" class="form-group">
+              <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
+                <input matInput formControlName="gafeteDep" class="textos" type="text" maxlength="60" placeholder="Nombre Gafete" [readonly]="!this.viewUcpas">
+                <mat-error *ngIf="this.creation.controls.gafeteDep.errors?.required">
+                  Nombre Gafete Requerido
+                </mat-error>
+                <mat-hint align="end">{{f.gafeteDep.value.length}} / 60</mat-hint>
+              </mat-form-field>
+            </div>
+           
             <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
               <div class="row row-cols-3">
                 <div class="form-group col">                                                                                   
@@ -178,7 +145,7 @@
                       <mat-checkbox *ngIf="this.viewUcpas" color="primary" formControlName="chkRefVigencia" [(ngModel)]="checked" (ngModelChange)="asignarRequerido($event)"></mat-checkbox>
                     </div>
 
-                    <div class="col-10" style="text-align: left; padding-left:initial;">
+                    <div  *ngIf="this.viewUcpas || this.creation.controls.inicioVigencia==''" class="col-10" style="text-align: left; padding-left:initial;">
 
                       <mat-form-field *ngIf="!checked" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
                         <input matInput (click)="picker2.open()" formControlName="inicioVigencia" (ngModelChange)="parseDate($event)" [matDatepicker]="picker2"
@@ -209,8 +176,42 @@
               </div>
             </div>
             <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
+              <div class="row row-cols-3">
+                <div *ngIf="this.viewUcpas || this.creation.controls.selConector==''" class="col" >
+                  <mat-form-field >
+                    <mat-select placeholder="CONECTOR" formControlName="selConector" [disabled]="!this.viewUcpas" >
+                      <mat-option *ngFor="let conector of listConector" [value]="conector.value" style="font-size: 12px;">{{conector.viewValue}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="this.creation.controls.selConector.errors?.required">
+                      CONECTOR REQUERIDO
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div *ngIf="this.viewUcpas || this.creation.controls.selFuncionalidad==''"  class="col">
+                  <mat-form-field>
+                    <mat-select placeholder="FUNCIONALIDAD" formControlName="selFuncionalidad" [disabled]="!this.viewUcpas" >
+                      <mat-option *ngFor="let funcionalidad of listFuncionalidad" [value]="funcionalidad.value" style="font-size: 12px;">{{funcionalidad.viewValue}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="this.creation.controls.selFuncionalidad.errors?.required">
+                      FUNCIONALIDAD REQUERIDO
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div *ngIf="this.viewUcpas || this.creation.controls.selArea==''" class="col">
+                  <mat-form-field>
+                    <mat-select placeholder="AREA" formControlName="selArea" [disabled]="!this.viewUcpas" >
+                      <mat-option *ngFor="let area of listArea" [value]="area.ID_AREA" style="font-size: 12px;">{{area.NOMBRE_AREA}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="this.creation.controls.selArea.errors?.required">
+                      AREA REQUERIDO
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
               <div class="row row-cols-2">
-                <div class="col">
+                <div  *ngIf="this.viewUcpas || this.creation.controls.selDepartamento==''"  class="col">
                   <mat-form-field>
                     <mat-select placeholder="DEPARTAMENTO" formControlName="selDepartamento" [disabled]="!this.viewUcpas">
                       <mat-option (onSelectionChange)="getMunicipio($event,deptos.DEPARTAMENTO)" *ngFor="let deptos of departamentos" [value]="deptos.DEPARTAMENTO"
@@ -221,7 +222,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div class="col">
+                <div  *ngIf="this.viewUcpas || this.creation.controls.selMunicipio==''"  class="col">
                   <mat-form-field>
                     <mat-select placeholder="MUNICIPIO" formControlName="selMunicipio" [disabled]="!this.viewUcpas">
                       <mat-option *ngFor="let munis of municipios" [value]="munis.MUNICIPIO" style="font-size: 12px;">{{munis.NOMBRE_MUNICIPIO}}</mat-option>
@@ -233,7 +234,7 @@
                 </div>
               </div>
             </div>
-            <div class="form-group">
+            <div  *ngIf="this.viewUcpas || this.creation.controls.referencia==''" class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                 <textarea matInput formControlName="referencia" style="text-transform: uppercase" color="warn" maxlength="2048" class="form-control"
                   placeholder="Referencia" rows="2" [readonly]="!this.viewUcpas"></textarea>
@@ -302,8 +303,11 @@
                       <td></td>
                       <td>
                         <i *ngIf="progress==100" class="fa fa-book"></i>
-                        <button type="button" class="btn btn-danger btn-s" (click)="files.length=0" [disabled]="!files.length">
+                        <button *ngIf="this.viewSecrePresi" type="button" class="btn btn-danger btn-s" (click)="files.length=0" [disabled]="!files.length && this.viewSecrePresi">
                           <span class="fa fa-trash"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-s" (click)="viewPdf(item.name)">
+                          <span class="fa fa-eye"></span>
                         </button>
                       </td>
                     </tr>

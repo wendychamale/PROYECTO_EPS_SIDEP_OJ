@@ -42,13 +42,14 @@ export class GestionesComponent implements OnInit {
   filteredOptions: Observable<any[]>;
   filteredOptionsTipo: Observable<any[]>;
   //Variables para verificar que usuario esta logueado
+ viewSecrePresi=false;
   viewSecretaria=false;
   viewPresidencia=false;
   viewNominas = false;
   viewUcpas = false;
   viewCidej=false;
   viewCit=false;
-  viewAdminUcpas = false;
+  viewAdmin=false;
   dataSource = new MatTableDataSource<any>();
   nombreTitulo;
 
@@ -107,16 +108,27 @@ export class GestionesComponent implements OnInit {
   valProfile(){
 // esto despues hay que quitarlo 
 
-this.viewSecretaria=true;
+this.viewSecretaria=false;
 this.viewPresidencia=false;
 this.viewUcpas = false;
-
-this.viewNominas = false;
-
+this.viewNominas = true;
 this.viewCidej=false;
 this.viewCit=false;
-this.viewAdminUcpas = false;
+this.viewSecrePresi=false;
+this.viewAdmin=false;
 
+if(this.viewSecretaria|| this.viewPresidencia){
+  this.viewSecrePresi=true;
+}
+if(this.viewAdmin){
+  this.viewSecrePresi=true;
+  this.viewUcpas = true;
+}
+
+if(this.viewCidej || this.viewCit||this.viewNominas){
+  this.viewSecrePresi=false;
+  this.viewUcpas = false;
+}
     for(var i=0; i<this.session.PERFILES.length; i++){
      /*  if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
            this.viewNominas = true;
@@ -137,6 +149,8 @@ this.viewAdminUcpas = false;
       console.log('aqui s '+verarea);
     }else  if(this.viewUcpas){
       verarea='UCPAS';
+    }else  if(this.viewNominas){
+      verarea='NOMINAS';
     }else {
       verarea='todos';
 
@@ -298,6 +312,7 @@ this.viewAdminUcpas = false;
   }
 
   confirmarGestion(item):void{
+    console.log('confirmamos solicitud');
     const dialogRef = this.dialog.open(ConfirmarComponent, {
       width: '650px',
       height: '100',
