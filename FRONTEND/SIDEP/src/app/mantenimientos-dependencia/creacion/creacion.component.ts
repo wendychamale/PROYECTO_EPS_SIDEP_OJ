@@ -92,7 +92,7 @@ export class CreacionComponent implements OnInit {
   idGes;
   idEstado;
   idTipoGestion;
-  areaSiguiente;
+  areaactual;
   
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
@@ -207,8 +207,8 @@ export class CreacionComponent implements OnInit {
     // esto despues hay que quitarlo 
     this.viewSecretaria=false;
     this.viewPresidencia=false;
-    this.viewUcpas = true;
-    this.viewNominas = false;
+    this.viewUcpas = false;
+    this.viewNominas = true;
     this.viewCidej=false;
     this.viewCit=false;
     this.viewAdmin =false;
@@ -298,19 +298,15 @@ export class CreacionComponent implements OnInit {
 
 
   crearDependencia(){
+    this.asignararea();
    let area=0;
-   let area1="";
-   if (this.viewPresidencia){
-        //Area 2 representa a que es un area Administrativa
+   if (this.viewPresidencia){//Area 2 representa a que es un area Administrativa
     area=2;
-    area1="UCPAS"
-   }else if (this.viewSecretaria){
-        //Area 1 representa a que es un area Judicial
+   }else if (this.viewSecretaria){//Area 1 representa a que es un area Judicial
     area=1;
-    area1="UCPAS"
-   }else {
+   }
+   else {
     area=this.creation.value.selArea;
-    area1="UCPAS"
    }
 
     console.log("Entramos a crear dependencia "+ area);
@@ -327,7 +323,7 @@ export class CreacionComponent implements OnInit {
         FECHA_ANULACION:"",
         FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
         OBS_FECHA_VIGENCIA:'',
-        PROCESO_ESTADO_AREA:area1,
+        PROCESO_ESTADO_AREA:this.areaactual,
         REFERENCIA:'',
         FUNCION_UNIDAD:'',
         DEPARTAMENTO:null,
@@ -551,13 +547,22 @@ archivo(nombre,id){
 
 }
 
+asignararea(){
+  if (this.viewPresidencia){
+    this.areaactual="PRESIDENCIA"
+   }else if (this.viewSecretaria){
+    this.areaactual="SECRETARIA"
+   }else if (this.viewUcpas){
+    this.areaactual="UCPAS"
+   }
+   else {
+    this.areaactual="NOMINAS"
+   }
+}
 //implementamos nuevos metodos para seguir con la creacion de una dependencia
 CrearDependencia1(){
 console.log("Crear dependencia continuacion.....");
-if(this.viewUcpas){
-  this.areaSiguiente='NOMINAS';
-}
-
+this.asignararea();
   let dependencia={
   
    ID_GESTION_DEPENDENCIA: this.idGestion,
@@ -578,7 +583,7 @@ if(this.viewUcpas){
    FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.creation.value.inicioVigencia, 'dd/MM/yyyy'),
    FECHA_PUBLICACION:this.datePipe.transform(this.creation.value.fechaPublicacion, 'dd/MM/yyyy'),
    OBS_FECHA_VIGENCIA:this.creation.value.inicioVigRef.toUpperCase(),
-   PROCESO_ESTADO_AREA: this.areaSiguiente,
+   PROCESO_ESTADO_AREA: this.areaactual,
    FUNCION_UNIDAD:this.creation.value.selFuncionalidad,
    DEPARTAMENTO:this.creation.value.selDepartamento,
    MUNICIPIO:this.creation.value.selMunicipio,

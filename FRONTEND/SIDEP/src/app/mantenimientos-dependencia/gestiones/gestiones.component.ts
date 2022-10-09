@@ -108,10 +108,10 @@ export class GestionesComponent implements OnInit {
   valProfile(){
 // esto despues hay que quitarlo 
 
-this.viewSecretaria=false;
+this.viewSecretaria=true;
 this.viewPresidencia=false;
 this.viewUcpas = false;
-this.viewNominas = true;
+this.viewNominas = false;
 this.viewCidej=false;
 this.viewCit=false;
 this.viewSecrePresi=false;
@@ -151,12 +151,18 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
       verarea='UCPAS';
     }else  if(this.viewNominas){
       verarea='NOMINAS';
-    }else {
+    }
+    
+    if (this.viewAdmin){
       verarea='todos';
-
     } 
-  console.log('se buscara datos por '+verarea);
-    if (verarea !='todos'){
+
+  console.log('se buscara datos por '+verarea+"Proceso"+this.idEstado);
+
+    if (verarea !='todos'){ //se busca por area especifica y
+      if(this.idEstado==2 && !this.viewNominas){
+        this.idEstado=0;
+      }
       this.mantenimientoDependenciaService.getGestionesArea(this.idEstado,0,verarea).subscribe(
         data => {
           if(data.length>0){ 
@@ -212,29 +218,73 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
    }  
 
   selFiltroTipo(event: any, tipo) {
+    let verarea='todos';
+    if(this.viewPresidencia){
+    verarea='PRESIDENCIA';
+    }else  if(this.viewSecretaria){
+      verarea='SECRETARIA';
+      console.log('aqui s '+verarea);
+    }else  if(this.viewUcpas){
+      verarea='UCPAS';
+    }else  if(this.viewNominas){
+      verarea='NOMINAS';
+    }   
+    if (this.viewAdmin){
+      verarea='todos';
+    } 
+
     if(event.isUserInput){
       if(event!=undefined){
       if (event.source.selected){
-      this.mantenimientoDependenciaService.getGestiones(this.idEstado,tipo.ID_TIPO).subscribe(
-        data => {
-          this.gestiones = data;
-          if(data.length>0){
-          this.gestion.controls.busqueda.setValidators(searchValidator(this.gestiones));              
-          this.filteredOptions = this.gestion.controls.busqueda.valueChanges.pipe(
-            startWith<string | any>(''),
-            map(value => typeof value === 'string' ? value : value.NOMBRE_DEPENDENCIA),
-            map(name => name ? this._filterGESTION(name) : this.gestiones.slice())
-          );               
-        }else{ 
-          this.filteredOptions = of([]);        
-          swal("Gestiones Dependencias", "No se han encontrado gestiones de " + tipo.DESCRIPCION , "info")
+
+       if(verarea!='todos'){
+          if(this.idEstado==2 && !this.viewNominas){
+            this.idEstado=0;
           }
+          this.mantenimientoDependenciaService.getGestionesArea(this.idEstado,tipo.ID_TIPO,verarea).subscribe(
+            data => {
+              this.gestiones = data;
+              console.log(data);
+              if(data.length>0){
+              this.gestion.controls.busqueda.setValidators(searchValidator(this.gestiones));              
+              this.filteredOptions = this.gestion.controls.busqueda.valueChanges.pipe(
+                startWith<string | any>(''),
+                map(value => typeof value === 'string' ? value : value.NOMBRE_DEPENDENCIA),
+                map(name => name ? this._filterGESTION(name) : this.gestiones.slice())
+              );               
+            }else{ 
+              this.filteredOptions = of([]);        
+              swal("Gestiones Dependencias", "No se han encontrado gestiones de " + tipo.DESCRIPCION , "info")
+              }
+    
+              this.dataSource = new MatTableDataSource(this.gestiones);
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;  
+            });
+        }else{
+          console.log('entramos a todos'+ tipo.ID_TIPO)
+          this.mantenimientoDependenciaService.getGestiones(0,tipo.ID_TIPO).subscribe(
+            data => {
+              this.gestiones = data;
+              console.log(data);
+              if(data.length>0){
+              this.gestion.controls.busqueda.setValidators(searchValidator(this.gestiones));              
+              this.filteredOptions = this.gestion.controls.busqueda.valueChanges.pipe(
+                startWith<string | any>(''),
+                map(value => typeof value === 'string' ? value : value.NOMBRE_DEPENDENCIA),
+                map(name => name ? this._filterGESTION(name) : this.gestiones.slice())
+              );               
+            }else{ 
+              this.filteredOptions = of([]);        
+              swal("Gestiones Dependencias", "No se han encontrado gestiones de " + tipo.DESCRIPCION , "info")
+              }
+    
+              this.dataSource = new MatTableDataSource(this.gestiones);
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;  
+            });
+       }
 
-          this.dataSource = new MatTableDataSource(this.gestiones);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;  
-
-        });
       }
     }
     }

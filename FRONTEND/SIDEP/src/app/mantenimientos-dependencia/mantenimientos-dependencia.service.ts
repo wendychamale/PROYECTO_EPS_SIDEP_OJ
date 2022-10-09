@@ -154,6 +154,7 @@ export class MantenimientosDependenciaService {
   }
 
   confirmarGestion(gestion): Observable<any> {
+    console.log("estamos confirmarGestion"+gestion);
     return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'CreaDependencia/insDependenciaNominal', gestion)
       .pipe(
         catchError(this.handleError('confirmarGestion', []))
@@ -161,6 +162,7 @@ export class MantenimientosDependenciaService {
   }
 
   confirmarBaja(gestion): Observable<any> {
+    console.log("estamos en confirmabaja"+gestion);
     return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'BajaDependencia/procBajaDependencia', gestion)
       .pipe(
         catchError(this.handleError('confirmarBaja', []))
@@ -168,6 +170,7 @@ export class MantenimientosDependenciaService {
   }
 
   confirmarActualizacion(gestion): Observable<any> {
+    console.log("estamos confirmarActualizacion"+gestion);
     return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'ActualizaDependencia/procActDependencia', gestion)
       .pipe(
         catchError(this.handleError('confirmarActualizacion', []))
@@ -175,6 +178,7 @@ export class MantenimientosDependenciaService {
   }
   
   confirmarRegularizacion(gestion): Observable<any> {
+    console.log("estamos confirmarBaja"+gestion);
     return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'RegulaDependencia/insDependenciaNominal', gestion)
       .pipe(
         catchError(this.handleError('confirmarBaja', []))
