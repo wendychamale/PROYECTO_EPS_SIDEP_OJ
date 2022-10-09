@@ -875,8 +875,17 @@ CREATE OR REPLACE PACKAGE SIDEP.PKG_DEPENDENCIA AS
         p_observaciones             TT_GEST_DEPENDENCIA.OBSERVACIONES%TYPE,
         p_ip                        TT_GEST_DEPENDENCIA.IP%TYPE,
         p_id_usuario_registro       TT_GEST_DEPENDENCIA.ID_USUARIO_REGISTRO%TYPE,
+        p_proceso_estado_area      TT_GEST_DEPENDENCIA.PROCESO_ESTADO_AREA%TYPE,
         p_id_salida                 OUT TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,
         p_msj                       OUT VARCHAR2);        
+ PROCEDURE PROC_RECHAZA_SOLOLICITUD_AREA(
+        p_id_gestion_dependencia    TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,
+        p_observaciones             TT_GEST_DEPENDENCIA.OBSERVACIONES%TYPE,
+        p_ip                        TT_GEST_DEPENDENCIA.IP%TYPE,
+        p_id_usuario_registro       TT_GEST_DEPENDENCIA.ID_USUARIO_REGISTRO%TYPE,
+        p_proceso_estado_area      TT_GEST_DEPENDENCIA.PROCESO_ESTADO_AREA%TYPE,
+        p_id_salida                 OUT TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,
+        p_msj                       OUT VARCHAR2);   
     PROCEDURE PROC_BAJA_DEPENDENCIA(
         p_id_gestion_dependencia    tt_gest_dependencia.id_gestion_dependencia%type,
         p_observaciones             tt_gest_dependencia.observaciones%type,
@@ -1124,7 +1133,8 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 AND C.ID_TIPO_GESTION = DECODE(p_id_tipo_gestion, 0, C.ID_TIPO_GESTION, p_id_tipo_gestion) 
                 AND ((P_ID_ESTADO_PROCESO=2 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area))OR (P_ID_ESTADO_PROCESO!=2))
                 AND ((P_ID_ESTADO_PROCESO=0 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area ))OR (P_ID_ESTADO_PROCESO!=0))
-                
+                AND ((P_ID_ESTADO_PROCESO=3 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area))OR (P_ID_ESTADO_PROCESO!=3))
+            
             ORDER BY FECHA_REGISTRO DESC; 
     end if;
       
@@ -2183,18 +2193,31 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
         p_observaciones             TT_GEST_DEPENDENCIA.OBSERVACIONES%TYPE,
         p_ip                        TT_GEST_DEPENDENCIA.IP%TYPE,
         p_id_usuario_registro       TT_GEST_DEPENDENCIA.ID_USUARIO_REGISTRO%TYPE,
+        p_proceso_estado_area       TT_GEST_DEPENDENCIA.proceso_estado_area%TYPE,
         p_id_salida                 OUT TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,
-        p_msj                       OUT VARCHAR2) AS
+        p_msj                       OUT VARCHAR2) 
+        AS
     BEGIN
+  
+        
         UPDATE TT_GEST_DEPENDENCIA
         SET
             ID_ESTADO_PROCESO = PKG_CONSTANTES.RECHAZADA,
             OBSERVACIONES = p_observaciones,
             IP = P_IP,
             ID_USUARIO_REGISTRO = p_id_usuario_registro,
-            FECHA_REGISTRO = SYSDATE
+            FECHA_REGISTRO = SYSDATE,
+            PROCESO_ESTADO_AREA= p_proceso_estado_area
         WHERE
             ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
+       begin
+        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA )
+               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, 'NOMINAS', p_id_gestion_dependencia);
+       EXCEPTION
+        WHEN OTHERS THEN
+           p_id_salida := p_id_gestion_dependencia;    
+        end;
+            
         p_id_salida := p_id_gestion_dependencia;
         p_msj := 'ok';
     EXCEPTION
@@ -2208,9 +2231,46 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             || '-ERROR_STACK-'
             || dbms_utility.format_error_stack
             || '-ERROR_BACKTRACE-'
-            || dbms_utility.format_error_backtrace;          
+            || dbms_utility.format_error_backtrace;     
+    
     END PROC_RECHAZA_SOLOLICITUD;
 
+ PROCEDURE PROC_RECHAZA_SOLOLICITUD_AREA(
+        p_id_gestion_dependencia    TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,
+        p_observaciones             TT_GEST_DEPENDENCIA.OBSERVACIONES%TYPE,
+        p_ip                        TT_GEST_DEPENDENCIA.IP%TYPE,
+        p_id_usuario_registro       TT_GEST_DEPENDENCIA.ID_USUARIO_REGISTRO%TYPE,
+        p_proceso_estado_area       TT_GEST_DEPENDENCIA.proceso_estado_area%TYPE,
+        p_id_salida                 OUT TT_GEST_DEPENDENCIA.ID_GESTION_DEPENDENCIA%TYPE,
+        p_msj                       OUT VARCHAR2) 
+        AS
+    BEGIN    
+        UPDATE TT_GEST_DEPENDENCIA
+        SET
+            OBSERVACIONES = p_observaciones,
+            IP = P_IP,
+            ID_USUARIO_REGISTRO = p_id_usuario_registro,
+            FECHA_REGISTRO = SYSDATE,
+            PROCESO_ESTADO_AREA= p_proceso_estado_area
+        WHERE
+            ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
+            
+        p_id_salida := p_id_gestion_dependencia;
+        p_msj := 'ok';
+    EXCEPTION
+        WHEN OTHERS THEN
+            p_id_salida :=-1;
+            p_msj := '@error al rechazar la dependencia@'
+            || ' -CODE-'
+            || sqlcode
+            || ' -ERROR- '
+            || sqlerrm
+            || '-ERROR_STACK-'
+            || dbms_utility.format_error_stack
+            || '-ERROR_BACKTRACE-'
+            || dbms_utility.format_error_backtrace;     
+    
+    END PROC_RECHAZA_SOLOLICITUD_AREA;
     /*Proceso para dar de baja a una dependencia nominal*/
     PROCEDURE PROC_BAJA_DEPENDENCIA(
         p_id_gestion_dependencia    tt_gest_dependencia.id_gestion_dependencia%type,

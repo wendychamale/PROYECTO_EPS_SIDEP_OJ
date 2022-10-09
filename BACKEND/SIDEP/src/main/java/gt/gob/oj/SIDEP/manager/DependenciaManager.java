@@ -264,6 +264,30 @@ public class DependenciaManager {
     return salida;
   }
   
+  public jsonResult rechazaSolicitudArea(TtDependencia ttDependencia) throws Exception {
+	    jsonResult salida = new jsonResult();
+	    ConnectionsPool c = new ConnectionsPool();
+	    Connection conn = c.conectar();
+	    conn.setAutoCommit(false);
+	    try {
+	      salida = rechazaSolicitudArea(ttDependencia, conn);
+	      if (salida.id > 0) {
+	        salida.result = "ok";
+	        conn.commit();
+	      } 
+	    } catch (Exception ex) {
+	      StringWriter sw = new StringWriter();
+	      ex.printStackTrace(new PrintWriter(sw));
+	      String exceptionAsString = sw.toString();
+	      ex.printStackTrace();
+	      conn.rollback();
+	      salida.id = -1;
+	      salida.msj = "@" + ex.getMessage() + "@" + exceptionAsString;
+	      salida.result = "ERROR";
+	    } 
+	    return salida;
+	  }
+  
   public jsonResult rechazaSolicitud(TtDependencia ttDependencia, Connection conn) throws Exception {
     jsonResult salida = new jsonResult();
     System.out.println(ttDependencia.ID_GESTION_DEPENDENCIA);
@@ -271,11 +295,13 @@ public class DependenciaManager {
     System.out.println(ttDependencia.IP);
     System.out.println(ttDependencia.ID_USUARIO_REGISTRO);
     System.out.println(ttDependencia.USUARIO);
-    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_DEPENDENCIA.PROC_RECHAZA_SOLOLICITUD(?,?,?,?,?,?)");
+    System.out.println(ttDependencia.PROCESO_ESTADO_AREA);
+    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_DEPENDENCIA.PROC_RECHAZA_SOLOLICITUD(?,?,?,?,?,?,?)");
     call.setString("p_id_gestion_dependencia", ttDependencia.ID_GESTION_DEPENDENCIA);
     call.setString("p_observaciones", ttDependencia.OBSERVACIONES);
     call.setString("p_ip", ttDependencia.IP);
     call.setString("p_id_usuario_registro", ttDependencia.ID_USUARIO_REGISTRO);
+    call.setString("p_proceso_estado_area", ttDependencia.PROCESO_ESTADO_AREA);
     call.registerOutParameter("p_id_salida", OracleTypes.NUMBER);
     call.registerOutParameter("p_msj", OracleTypes.VARCHAR);
     call.execute();
@@ -286,6 +312,31 @@ public class DependenciaManager {
     call.close();
     return salida;
   }
+  
+  public jsonResult rechazaSolicitudArea(TtDependencia ttDependencia, Connection conn) throws Exception {
+	    jsonResult salida = new jsonResult();
+	    System.out.println(ttDependencia.ID_GESTION_DEPENDENCIA);
+	    System.out.println(ttDependencia.OBSERVACIONES);
+	    System.out.println(ttDependencia.IP);
+	    System.out.println(ttDependencia.ID_USUARIO_REGISTRO);
+	    System.out.println(ttDependencia.USUARIO);
+	    System.out.println(ttDependencia.PROCESO_ESTADO_AREA);
+	    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_DEPENDENCIA.PROC_RECHAZA_SOLOLICITUD_AREA(?,?,?,?,?,?,?)");
+	    call.setString("p_id_gestion_dependencia", ttDependencia.ID_GESTION_DEPENDENCIA);
+	    call.setString("p_observaciones", ttDependencia.OBSERVACIONES);
+	    call.setString("p_ip", ttDependencia.IP);
+	    call.setString("p_id_usuario_registro", ttDependencia.ID_USUARIO_REGISTRO);
+	    call.setString("p_proceso_estado_area", ttDependencia.PROCESO_ESTADO_AREA);
+	    call.registerOutParameter("p_id_salida", OracleTypes.NUMBER);
+	    call.registerOutParameter("p_msj", OracleTypes.VARCHAR);
+	    call.execute();
+	    salida.id = call.getInt("p_id_salida");
+	    salida.msj = call.getString("p_msj");
+	    if (salida.id > 0)
+	      salida.result = "OK"; 
+	    call.close();
+	    return salida;
+	  }
   
   public jsonResult validaDependenciaPlaza(int p_codigo_dependencia) throws Exception {
     jsonResult salida = new jsonResult();

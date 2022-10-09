@@ -106,7 +106,19 @@ public class DependenciaController {
 			return Response.ok(new jsonResult(-1, "Error", FiltroErrores.filtraMensaje(e.getMessage()))).build();
 		}
 	}
-
+	
+	@POST
+	@Path("/rechazaSolicitudArea")
+	@Produces({ "application/json" })
+	public Response rechazaSolicitudArea(@Context HttpServletRequest req, TtDependencia ttDependencia) {
+		try {
+			ttDependencia.IP = req.getRemoteAddr();
+			return Response.ok(this.manager.rechazaSolicitudArea(ttDependencia)).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.ok(new jsonResult(-1, "Error", FiltroErrores.filtraMensaje(e.getMessage()))).build();
+		}
+	}
 	@GET
 	@Path("/{p_codigo_dependencia}/validaDependenciaPlaza")
 	@Produces({ "application/json" })

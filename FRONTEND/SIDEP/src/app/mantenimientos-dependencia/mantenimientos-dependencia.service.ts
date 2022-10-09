@@ -152,7 +152,12 @@ export class MantenimientosDependenciaService {
         catchError(this.handleError('rechazoGestion', []))
       );
   }
-
+  rechazoGestion1(gestion): Observable<any> {
+    return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'Dependencia/rechazaSolicitudArea', gestion)
+      .pipe(
+        catchError(this.handleError('rechazoGestion', []))
+      );
+  }
   confirmarGestion(gestion): Observable<any> {
     console.log("estamos confirmarGestion"+gestion);
     return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'CreaDependencia/insDependenciaNominal', gestion)

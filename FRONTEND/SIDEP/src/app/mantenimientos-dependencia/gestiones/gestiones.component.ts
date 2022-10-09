@@ -302,6 +302,8 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   }
 
   rechazar(item):void{
+    
+    console.log(item);
     const dialogRef = this.dialog.open(RechazarComponent, {
       width: '650px',
       height: '100',
@@ -312,13 +314,31 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
         if(result != undefined){
        this.confirmarRechazo((confirm) => {
          if(confirm){
-            this.rechazoGestion(item.ID_GESTION_DEPENDENCIA,result.OBSERVACIONES);
+            this.rechazoGestion(item.ID_GESTION_DEPENDENCIA,result.OBSERVACIONES,item.TIPO_AREA,item.PROCESO_ESTADO_AREA,0) ;
          }
        });
       }
       });
   }
+  rechazar1(item):void{
+    
+    console.log(item);
+    const dialogRef = this.dialog.open(RechazarComponent, {
+      width: '650px',
+      height: '100',
+      data: {CODIGO_DEPENDENCIA: item.CODIGO_DEPENDENCIA, NOMBRE_DEPENDENCIA: item.NOMBRE_DEPENDENCIA, NOMBRE:item.NOMBRE, CODIGO_PRESUPUESTARIO:item.CODIGO_PRESUPUESTARIO, ID_TIPO_GESTION:item.ID_TIPO_GESTION, OBSERVACIONES:''}});
 
+      dialogRef.afterClosed().subscribe(result => {
+
+        if(result != undefined){
+       this.confirmarRechazo((confirm) => {
+         if(confirm){
+            this.rechazoGestion(item.ID_GESTION_DEPENDENCIA,result.OBSERVACIONES,item.TIPO_AREA,item.PROCESO_ESTADO_AREA,1) ;
+         }
+       });
+      }
+      });
+  }
 
   confirmarRechazo(callback: Function):any{
     swal({
@@ -340,15 +360,28 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
 
   }
 
-  rechazoGestion(idGestion, observaciones){
-
+  rechazoGestion(idGestion, observaciones,tipo_area,area,tipo){
+   if( area=='UCPAS' && tipo_area==1){
+    area='SECRETARIA';
+   } else if ( area=='UCPAS'&& tipo_area==2){
+    area='PRESIDENCIA';
+   }else if( area=='SECRETARIA' || area=='PRESIDENCIA' ){
+    area='UCPAS';
+   }else if ( area=='NOMINAS'){
+    area='UCPAS';
+   }else{
+    area='NOMINAS';
+   }
+   console.log(area+":"+tipo_area);
    let gestion = {  
         ID_GESTION_DEPENDENCIA : idGestion,
         OBSERVACIONES : observaciones,
         IP : "",
-        ID_USUARIO_REGISTRO : this.session.ID_USUARIO
-   };
+        ID_USUARIO_REGISTRO : this.session.ID_USUARIO,
+        PROCESO_ESTADO_AREA:area
 
+   };
+  if (tipo==0){
     this.mantenimientoDependenciaService.rechazoGestion(gestion).subscribe(
       data => {
         if(data.result=='ok'){
@@ -358,6 +391,18 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
           swal("Error", data.msj, "error")
         } 
       });
+  }else{
+    this.mantenimientoDependenciaService.rechazoGestion1(gestion).subscribe(
+      data => {
+        if(data.result=='ok'){
+          swal("Gestión Rechazada Exitosamente", "", "success")
+          this.loadGestiones();
+         }else{
+          swal("Error", data.msj, "error")
+        } 
+      });
+  }
+    
 
   }
 
