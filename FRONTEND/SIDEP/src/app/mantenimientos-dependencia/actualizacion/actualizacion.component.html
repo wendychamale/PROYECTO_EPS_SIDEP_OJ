@@ -38,7 +38,7 @@
         <div style="background-color: white; padding-left: 2%; padding-right: 2%; padding-top: -0.1%; padding-bottom: 2.5%;">
         <div class="=col-md-6 mx-auto mt-5 ">
             <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">                      
-                 <details *ngIf="idEstado==3">
+                 <details >
                     <summary class="etiqueta" >Observaciones <i class="fa fa-comments-o"></i></summary>
                     <div style="border: 2px solid #215074; padding-left: 1px; padding-right: 1px; padding-top: 1px; margin-bottom: 5px; font-size: 12px; border-radius: 5px; ">
                         <div class="form-group" style="padding-left: 5px; padding-right: 5px;">
@@ -48,7 +48,7 @@
                   </details>
                   <br>    
                  <div class="row row-cols-2">
-                <div *ngIf="this.viewUcpas || this.update.controls.codDependencia!==''" class="form-group col">                 
+                <div *ngIf="this.viewUcpas || !this.update.controls.codDependencia.value==''" class="form-group col">                 
                   <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                     <input   matInput formControlName="codDependencia" type="text" placeholder="Código Dependencia" (ngModelChange)="valCodDep($event)" [readonly]="!this.viewUcpas">
                     <mat-error *ngIf="this.update.controls.codDependencia.errors?.required">
@@ -59,7 +59,7 @@
                     </mat-hint>
                   </mat-form-field>
                 </div>
-                <div *ngIf="this.viewUcpas || this.update.controls.codPresupuestario!==''" class="form-group col">
+                <div *ngIf="this.viewUcpas || !this.update.controls.codPresupuestario.value==''" class="form-group col">
                   <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                     <input matInput formControlName="codPresupuestario" type="text" maxlength="5" placeholder="Código Presupuestario" (ngModelChange)="valCodPres($event)" [readonly]="!this.viewUcpas">
                     <mat-error *ngIf="this.update.controls.codPresupuestario.errors?.required">
@@ -81,7 +81,7 @@
                 <mat-hint align="end">{{f.nombreDep.value.length}} / 1024</mat-hint>
               </mat-form-field>
             </div>
-            <div *ngIf="this.viewUcpas || this.update.controls.cortoDep!==''" class="form-group">
+            <div *ngIf="this.viewUcpas || !this.update.controls.cortoDep.value==''" class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                 <input matInput formControlName="cortoDep" class="textos" type="text" maxlength="60" placeholder="Nombre Corto" [readonly]="!this.viewUcpas">
                 <mat-error *ngIf="this.update.controls.cortoDep.errors?.required">
@@ -90,7 +90,7 @@
                 <mat-hint align="end">{{f.cortoDep.value.length}} / 50</mat-hint>
               </mat-form-field>
             </div>
-            <div *ngIf="this.viewUcpas || this.update.controls.gafeteDep!==''"  class="form-group">
+            <div *ngIf="this.viewUcpas || !this.update.controls.gafeteDep.value==''"  class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                 <input matInput formControlName="gafeteDep" class="textos" type="text" maxlength="60" placeholder="Nombre Gafete" [readonly]="!this.viewUcpas">
                 <mat-error *ngIf="this.update.controls.gafeteDep.errors?.required">
@@ -110,7 +110,7 @@
             </div>
             <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
               <div class="row row-cols-3">
-                <div *ngIf="this.viewUcpas || this.update.controls.gafeteDep!==''" class="col">
+                <div *ngIf="this.viewUcpas || !this.update.controls.gafeteDep.value==''" class="col">
                   <mat-form-field>
                       <input matInput *ngIf="loadHabilitados('conectorDep')" formControlName="conectorDep" class="textos" type="text" placeholder="CONECTOR" [disabled]="!this.viewUcpas">
                       <mat-select *ngIf="loadHabilitados('selConector')" placeholder="CONECTOR" formControlName="selConector" [disabled]="!this.viewUcpas" >
@@ -121,7 +121,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div *ngIf="this.viewUcpas || this.update.controls.selFuncionalidad!==''" class="col">
+                <div *ngIf="this.viewUcpas || !this.update.controls.selFuncionalidad.value==''" class="col">
                   <mat-form-field>
                     <input matInput *ngIf="loadHabilitados('funcionDep')" formControlName="funcionDep" class="textos" type="text" placeholder="FUNCIONALIDAD" [disabled]="!this.viewUcpas">
                     <mat-select *ngIf="loadHabilitados('selFuncionalidad')" placeholder="FUNCIONALIDAD" formControlName="selFuncionalidad" [disabled]="!this.viewUcpas">
@@ -132,7 +132,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div *ngIf="this.viewUcpas || this.update.controls.selArea!==''" class="col">
+                <div *ngIf="this.viewUcpas || !this.update.controls.selArea.value==''" class="col">
                   <mat-form-field>
                       <input matInput *ngIf="loadHabilitados('areaDep')" formControlName="areaDep" class="textos" type="text" placeholder="AREA" [disabled]="!this.viewUcpas">
                       <mat-select *ngIf="loadHabilitados('selArea')" placeholder="AREA" formControlName="selArea" [disabled]="!this.viewUcpas">
@@ -179,7 +179,7 @@
                       </mat-hint>
                     </mat-form-field>    
                 </div>
-                <div  *ngIf="this.viewUcpas || this.update.controls.inicioDep!==''" class="form-group col">
+                <div  *ngIf="this.viewUcpas || !this.update.controls.inicioDep.value==''" class="form-group col">
 
                     <mat-form-field *ngIf="loadHabilitados('inicioDep')" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
                         <input matInput  formControlName="inicioDep" class="textos" type="text" placeholder="INICIO VIGENCIA" [disabled]="!this.viewUcpas"  [readonly]="!this.viewUcpas">
@@ -258,7 +258,7 @@
 
             <div class="container-fluid" style="padding-left: inherit; padding-right: inherit;">
               <div class="row row-cols-2">
-                <div  *ngIf="this.viewUcpas || this.update.controls.selDepartamento!==''" class="col">
+                <div  *ngIf="this.viewUcpas || !this.update.controls.selDepartamento.value==''" class="col">
                   <mat-form-field>
                     <input matInput *ngIf="loadHabilitados('departamentoDep')" formControlName="departamentoDep" class="textos" type="text" placeholder="DEPARTAMENTO" [disabled]="!this.viewUcpas">
                     <mat-select *ngIf="loadHabilitados('selDepartamento')" placeholder="DEPARTAMENTO" formControlName="selDepartamento" [disabled]="!this.viewUcpas"> 
@@ -270,7 +270,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div *ngIf="this.viewUcpas || this.update.controls.selMunicipio!==''"  class="col">
+                <div *ngIf="this.viewUcpas || !this.update.controls.selMunicipio.value==''"  class="col">
                   <mat-form-field>
                       <input matInput *ngIf="loadHabilitados('municipioDep')" formControlName="municipioDep" class="textos" type="text" placeholder="MUNICIPIO" [disabled]="!this.viewUcpas">
                       <mat-select *ngIf="loadHabilitados('selMunicipio')" placeholder="MUNICIPIO" formControlName="selMunicipio" [disabled]="!this.viewUcpas" >
@@ -283,7 +283,7 @@
                 </div>
               </div>
             </div>
-            <div  *ngIf="this.viewUcpas || this.update.controls.referencia!==''"  class="form-group">
+            <div  *ngIf="this.viewUcpas || !this.update.controls.referencia.value==''"  class="form-group">
               <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
                 <textarea matInput formControlName="referencia" color="warn" class="form-control" placeholder="REFERENCIA" rows="2" [readonly]="!this.viewUcpas"></textarea>
                 <mat-error *ngIf="this.update.controls.referencia.errors?.required">
@@ -373,7 +373,7 @@
           </div>
         </div>
         <div class="button-group">
-          <button mat-raised-button class="btn btn-primary btn-block" [disabled]="update.invalid || files.length==0 || validaFecha" (click)="actualizarDependencia()" style="font-size: 12px;">Actualizar</button>
+          <button mat-raised-button class="btn btn-primary btn-block" [disabled]=" files.length==0 || validaFecha" (click)="actualizarDependencia()" style="font-size: 12px;">Actualizar</button>
           <button class="btn btn-danger btn-block" ui-sref="login" (click)="cancelar();" style="font-size: 12px;">Cancelar</button>
         </div>
       </div>

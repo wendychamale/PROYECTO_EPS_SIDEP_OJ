@@ -86,7 +86,7 @@ export class ActualizacionComponent implements OnInit {
   publicaDep;
   chkRefVigencia;
   inicioVigRef;
-  areaSiguiente;
+  areaActual;
 
   //Manejo de controles
   controlsLectura = [];
@@ -246,23 +246,29 @@ export class ActualizacionComponent implements OnInit {
   valProfile(){
     // esto despues hay que quitarlo 
     this.viewSecretaria=false;
-    this.viewPresidencia=false;
-    this.viewUcpas = true;
+    this.viewPresidencia=true;
+    this.viewUcpas = false;
     this.viewNominas = false;
     this.viewCidej=false;
     this.viewCit=false;
     this.viewAdmin =false;
 
-  if(this.viewSecretaria|| this.viewPresidencia){
-    this.viewSecrePresi=true;
-    this.areaSiguiente='UCPAS';
-  }
-  if (this.viewUcpas){
-    this.areaSiguiente='NOMINAS';
-  }
-  if(this.viewAdmin){
+    if (this.viewPresidencia){
+      this.viewSecrePresi=true;
+      this.areaActual="PRESIDENCIA"
+     }else if (this.viewSecretaria){
+      this.viewSecrePresi=true;
+      this.areaActual="SECRETARIA"
+     }else if (this.viewUcpas){
+      this.areaActual="UCPAS"
+     }else if (this.viewNominas){
+      this.viewSecrePresi=false;
+      this.viewUcpas = false;
+      this.areaActual="NOMINAS"
+     }else if (this.viewAdmin){
     this.viewSecrePresi=true;
     this.viewUcpas = true;
+    this.areaActual="UCPAS"
   }
 
   if(this.viewCidej || this.viewCit||this.viewNominas){
@@ -355,7 +361,7 @@ export class ActualizacionComponent implements OnInit {
 
   asignarData(data){
 
-    this.update.controls.codDependencia.setValue(data.CODIGO_DEPENDENCIA);
+    this.update.controls.codDependencia.setValue(data.CODIGO_DEPENDENCIA );
     this.update.controls.codPresupuestario.setValue(data.CODIGO_PRESUPUESTARIO);
     this.update.controls.nombreDep.setValue(data.NOMBRE_DEPENDENCIA); 
     this.update.controls.gafeteDep.setValue(data.NOMBRE_GAFETE);
@@ -390,6 +396,8 @@ export class ActualizacionComponent implements OnInit {
     this.update.controls.inicioVigRef.setValue(data.OBS_FECHA_VIGENCIA);
 
     this.checked = data.FECHA_ENTRA_VIGENCIA.length == 0;
+    console.log('----------'+this.update.controls.codDependencia.value);
+    
   }
 
   nombreArchivo(ruta){
@@ -438,7 +446,7 @@ export class ActualizacionComponent implements OnInit {
      FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.update.value.inicioVigencia, 'dd/MM/yyyy'),
      FECHA_PUBLICACION:this.datePipe.transform(this.update.value.fechaPublicacion, 'dd/MM/yyyy'),
      OBS_FECHA_VIGENCIA:this.update.value.inicioVigRef.toUpperCase(),
-     PROCESO_ESTADO_AREA: this.areaSiguiente,
+     PROCESO_ESTADO_AREA: this.areaActual,
      FUNCION_UNIDAD:this.update.value.selFuncionalidad,
      DEPARTAMENTO:this.update.value.selDepartamento,
      MUNICIPIO:this.update.value.selMunicipio,
