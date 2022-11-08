@@ -246,8 +246,8 @@ export class ActualizacionComponent implements OnInit {
   valProfile(){
     // esto despues hay que quitarlo 
     this.viewSecretaria=false;
-    this.viewPresidencia=true;
-    this.viewUcpas = false;
+    this.viewPresidencia=false;
+    this.viewUcpas = true;
     this.viewNominas = false;
     this.viewCidej=false;
     this.viewCit=false;

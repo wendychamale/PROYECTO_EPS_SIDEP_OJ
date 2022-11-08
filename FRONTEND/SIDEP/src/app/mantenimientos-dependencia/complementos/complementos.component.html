@@ -118,8 +118,8 @@
                         <ng-container matColumnDef="OPCIONES">
                             <th mat-header-cell *matHeaderCellDef class="encabezado"> OPCIONES </th>
                             <td mat-cell style="text-align: center;" *matCellDef="let row" >
-                                <a *ngIf="this.viewCIT" class="btn btn-link btn-warning btn-just-icon" (click)="modalCorreo(row);" matTooltipClass="primary-tooltip" matTooltip="Correo Electrónico" ><i class="fa fa-envelope"></i></a>                                                               
-                                <a *ngIf="this.viewCIDEJ" class="btn btn-link btn-info btn-just-icon" (click)="modalDespacho(row);" matTooltipClass="primary-tooltip" matTooltip="Código Despacho"><i class="fa fa-th-list"></i></a>                                     
+                                <a *ngIf="this.viewCit || this.viewAdmin" class="btn btn-link btn-warning btn-just-icon" (click)="modalCorreo(row);" matTooltipClass="primary-tooltip" matTooltip="Correo Electrónico" ><i class="fa fa-envelope"></i></a>                                                               
+                                <a *ngIf="this.viewCidej || this.viewAdmin" class="btn btn-link btn-info btn-just-icon" (click)="modalDespacho(row);" matTooltipClass="primary-tooltip" matTooltip="Código Despacho"><i class="fa fa-th-list"></i></a>                                     
                              </td>
                           </ng-container>
                                 

@@ -33,10 +33,16 @@ export class DependenciasComponent implements OnInit {
   filteredOptions: Observable<any[]>;
   filteredOptionsTipo: Observable<any[]>;
   filtered: Observable<any[]>[];
-  viewNominas = false;
-  viewUcpas = false;
   dataSource = new MatTableDataSource<any>();
-
+//Variables para verificar que usuario esta logueado
+viewSecrePresi=false;
+viewSecretaria=false;
+viewPresidencia=false;
+viewNominas = false;
+viewUcpas = false;
+viewCidej=false;
+viewCit=false;
+viewAdmin=false;
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient, private fb: FormBuilder, private _location: Location, private datePipe: DatePipe,
     private router: Router, private route: ActivatedRoute, public dialog: MatDialog
@@ -67,13 +73,36 @@ export class DependenciasComponent implements OnInit {
   }
 
   valProfile() {
-    for (var i = 0; i < this.session.PERFILES.length; i++) {
+    // esto despues hay que quitarlo 
+
+this.viewSecretaria=false;
+this.viewPresidencia=false;
+this.viewUcpas = true;
+this.viewNominas = false;
+this.viewCidej=false;
+this.viewCit=false;
+this.viewSecrePresi=false;
+this.viewAdmin=false;
+
+if(this.viewSecretaria|| this.viewPresidencia){
+  this.viewSecrePresi=true;
+}
+if(this.viewAdmin){
+  this.viewSecrePresi=true;
+  this.viewUcpas = true;
+}
+
+if(this.viewCidej || this.viewCit||this.viewNominas){
+  this.viewSecrePresi=false;
+  this.viewUcpas = false;
+}
+  /*  for (var i = 0; i < this.session.PERFILES.length; i++) {
       if (this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL) {
         this.viewNominas = true;
       } else if (this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL) {
         this.viewUcpas = true;
       }
-    }
+    }*/
   }
 
   loadDependencias() {

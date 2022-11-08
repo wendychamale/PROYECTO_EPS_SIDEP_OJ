@@ -213,6 +213,7 @@ export class MantenimientosDependenciaService {
   }
   
   getDepedenciasComplementos(): Observable<any> {
+    console.log("consulta a-----"+this.appSettings.restApiServiceBaseUri + 'Catalogo/depCorreoCidej');
     return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'Catalogo/depCorreoCidej')
       .pipe(
         catchError(this.handleError('getDepedenciasComplementos', []))

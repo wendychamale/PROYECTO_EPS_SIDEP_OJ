@@ -36,7 +36,15 @@ export class ComplementosComponent implements OnInit {
   viewCIDEJ = false;
   viewCIT = false;
   dataSource = new MatTableDataSource<any>();
-    
+      //Variables para verificar que usuario esta logueado
+ viewSecrePresi=false;
+ viewSecretaria=false;
+ viewPresidencia=false;
+ viewNominas = false;
+ viewUcpas = false;
+ viewCidej=false;
+ viewCit=false;
+ viewAdmin=false;
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
     private router: Router,private route:ActivatedRoute,public dialog: MatDialog
@@ -52,40 +60,64 @@ export class ComplementosComponent implements OnInit {
       busqueda: [''],      
       selEstados: ['']      
     });
-    
+   
+
+    this.valProfile();
+ 
     this.route.params.subscribe(
       (params: Params) => {
         this.loadDependencias();
       }
     );
-
-    this.valProfile();
-
   }
 
   valProfile(){
-    for(var i=0; i<this.session.PERFILES.length; i++){
+    // esto despues hay que quitarlo 
+
+this.viewSecretaria=false;
+this.viewPresidencia=false;
+this.viewUcpas = false;
+this.viewNominas = false;
+this.viewCidej=false;
+this.viewCit=false;
+this.viewSecrePresi=false;
+this.viewAdmin=true;
+
+if(this.viewSecretaria|| this.viewPresidencia){
+  this.viewSecrePresi=true;
+}
+if(this.viewAdmin){
+  this.viewSecrePresi=true;
+  this.viewUcpas = true;
+}
+
+if(this.viewCidej || this.viewCit||this.viewNominas){
+  this.viewSecrePresi=false;
+  this.viewUcpas = false;
+}
+   /* for(var i=0; i<this.session.PERFILES.length; i++){
        if(this.constantes.CIDEJ == this.session.PERFILES[i].ID_PERFIL){
            this.viewCIDEJ = true;
        }else if(this.constantes.CIT == this.session.PERFILES[i].ID_PERFIL){
         this.viewCIT = true;
       }
-   }
+   }*/
   } 
 
   loadDependencias(){
-    this.mantenimientoDependenciaService.getDepedenciasComplementos().subscribe(
+    /*this.mantenimientoDependenciaService.getDepedenciasComplementos().subscribe(
       data => {
         if(data.length>0){
         this.dependencias = data;
       }else{ 
           swal("Dependencias Nominales", "No se han encontrado dependencias", "info")
         }
-
+*/
+this.dependencias=[{DEPENDENCIA:'01',NOMBRE_DEPENDENCIA:'dependencia nominal 1',CORREO_ELECTRONICO:'dependencia1.gmail.com',ID_DESPACHO:'10'}]
         this.dataSource = new MatTableDataSource(this.dependencias);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-      });
+    //  });
   }
 
 
