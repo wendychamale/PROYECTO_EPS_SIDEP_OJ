@@ -572,7 +572,7 @@ PROCEDURE proc_ins_tt_dependencia_correo (
        FECHA ULTIMA MODIFICACION= 
   */
     BEGIN
-        INSERT INTO tt_dependencia_correo (
+        INSERT INTO RRHH.tt_dependencia_correo (
             id_dependencia_correo,
             dependencia,
             correo_electronico,
@@ -616,7 +616,7 @@ PROCEDURE proc_ins_tt_dependencia_rh_cid (
    FECHA ULTIMA MODIFICACION= 
 */
 BEGIN
-    INSERT INTO tt_dependencia_rh_cidej (
+    INSERT INTO RRHH.tt_dependencia_rh_cidej (
         id_dep_rh_cidej,
         dependencia,
         id_despacho,
@@ -2569,7 +2569,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 p_ip=>p_ip);
                 p_msj := 'ok';
         ELSE
-            UPDATE tt_dependencia_correo
+            UPDATE RRHH.tt_dependencia_correo
                 SET 
                     CORREO_ELECTRONICO = p_correo_electronico, 
                     ID_USUARIO_REGISTRO = p_id_usuario_registro, 
@@ -2644,7 +2644,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 p_ip=>p_ip);
             p_msj := 'ok';
         else
-            UPDATE tt_dependencia_rh_cidej
+            UPDATE RRHH.tt_dependencia_rh_cidej
                 SET id_Despacho = p_id_despacho, ip = p_ip, FECHA_REGISTRO = SYSDATE, 
                     id_usuario_registro = p_id_usuario_registro
             WHERE
@@ -2695,7 +2695,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
     AS
         P_VALIDA NUMBER := 0;
     BEGIN
-        SELECT COUNT(*) INTO P_VALIDA FROM TT_DEPENDENCIA_RH_CIDEJ 
+        SELECT COUNT(*) INTO P_VALIDA FROM RRHH.TT_DEPENDENCIA_RH_CIDEJ 
         WHERE ID_ESTADO = 1 AND ID_DESPACHO = P_ID_DESPACHO;
         IF P_VALIDA = 0 THEN
             p_id_salida := 1;

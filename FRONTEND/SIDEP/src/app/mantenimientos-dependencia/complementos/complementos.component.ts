@@ -105,19 +105,19 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   } 
 
   loadDependencias(){
-    /*this.mantenimientoDependenciaService.getDepedenciasComplementos().subscribe(
+    this.mantenimientoDependenciaService.getDepedenciasComplementos().subscribe(
       data => {
         if(data.length>0){
         this.dependencias = data;
       }else{ 
           swal("Dependencias Nominales", "No se han encontrado dependencias", "info")
         }
-*/
-this.dependencias=[{DEPENDENCIA:'01',NOMBRE_DEPENDENCIA:'dependencia nominal 1',CORREO_ELECTRONICO:'dependencia1.gmail.com',ID_DESPACHO:'10'}]
+
+//this.dependencias=[{DEPENDENCIA:'01',NOMBRE_DEPENDENCIA:'dependencia nominal 1',CORREO_ELECTRONICO:'dependencia1.gmail.com',ID_DESPACHO:'10'}]
         this.dataSource = new MatTableDataSource(this.dependencias);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-    //  });
+      });
   }
 
 
@@ -153,6 +153,7 @@ this.dependencias=[{DEPENDENCIA:'01',NOMBRE_DEPENDENCIA:'dependencia nominal 1',
          IP : "",
          ID_USUARIO_REGISTRO : this.session.ID_USUARIO
     };
+    console.log("------>"+correoDep.ID_DEPENDENCIA_CORREO);
  
     this.mantenimientoDependenciaService.correoDependencia(correoDep).subscribe(
        data => {

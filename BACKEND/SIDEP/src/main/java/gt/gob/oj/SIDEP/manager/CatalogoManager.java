@@ -119,7 +119,7 @@ public class CatalogoManager {
     List<Map<String, Object>> salida = new ArrayList<>();
     ConnectionsPool c = new ConnectionsPool();
     Connection conn = c.conectar();
-    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_CATALOGOS.PROC_GET_DEPENDENCIAS(?,?)");
+    CallableStatement call = conn.prepareCall("call " + "RRHH" + ".PKG_CATALOGOS.PROC_GET_DEPENDENCIAS(?,?)");
     call.registerOutParameter("P_CUR_DATASET", OracleTypes.CURSOR);
     call.registerOutParameter("P_MSJ", OracleTypes.VARCHAR);
     call.execute();
@@ -144,7 +144,8 @@ public class CatalogoManager {
     List<Map<String, Object>> salida = new ArrayList<>();
     ConnectionsPool c = new ConnectionsPool();
     Connection conn = c.conectar();
-    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_CATALOGOS.PROC_GET_CORREOCIDEJ(?,?)");
+   // CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_CATALOGOS.PROC_GET_CORREOCIDEJ(?,?)");
+    CallableStatement call = conn.prepareCall("call " + "RRHH"+ ".PKG_CATALOGOS.PROC_GET_CORREOCIDEJ(?,?)");
     call.registerOutParameter("P_CUR_DATASET", OracleTypes.CURSOR);
     call.registerOutParameter("P_MSJ", OracleTypes.VARCHAR);
     call.execute();
