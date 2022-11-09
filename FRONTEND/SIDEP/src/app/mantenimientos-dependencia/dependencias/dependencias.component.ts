@@ -58,7 +58,7 @@ viewAdmin=false;
       busqueda: [''],
       selEstados: ['']
     });
-
+    this.valProfile();
     this.route.params.subscribe(
       (params: Params) => {
         // this.idEstado = params.id;
@@ -68,7 +68,7 @@ viewAdmin=false;
       }
     );
 
-    this.valProfile();
+
 
   }
 
@@ -106,6 +106,37 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   }
 
   loadDependencias() {
+    let verarea='todos';
+    if(this.viewPresidencia){
+    verarea='PRESIDENCIA';
+    }else  if(this.viewSecretaria){
+      verarea='SECRETARIA';
+    }else  if(this.viewUcpas){
+      verarea='UCPAS';
+    }else  if(this.viewNominas){
+      verarea='NOMINAS';
+    }
+    
+    if (this.viewAdmin){
+      verarea='todos';
+    } 
+
+  console.log('se buscara datos por '+verarea);
+  if (verarea !='todos'){
+    this.mantenimientoDependenciaService.getDependenciasArea(verarea).subscribe(
+      data => {
+        if (data.length > 0) {
+          this.dependencias = data;
+        } else {
+          swal("Dependencias Nominales", "No se han encontrado dependencias", "info")
+        }
+
+        this.dataSource = new MatTableDataSource(this.dependencias);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
+  }else{
+
     this.mantenimientoDependenciaService.getDependencias().subscribe(
       data => {
         if (data.length > 0) {
@@ -118,6 +149,8 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
+  }
+    
   }
 
   filterMatTable(filterValue: any) {
@@ -157,8 +190,8 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
 
     this.mantenimientoDependenciaService.getDataDependencia(item.DEPENDENCIA).subscribe(
       data => {
-        console.log("Acuerdo " + data[0].FECHA_DEL_ACUERDO);
-        console.log("Inicio " + data[0].FECHA_ENTRA_VIGENCIA);
+     //   console.log("Acuerdo " + data[0].FECHA_DEL_ACUERDO);
+       // console.log("Inicio " + data[0].FECHA_ENTRA_VIGENCIA);
     
         if (data.length > 0) {
           this.modalDependencia(data[0]);

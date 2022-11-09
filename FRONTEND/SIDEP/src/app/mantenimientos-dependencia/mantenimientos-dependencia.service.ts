@@ -198,7 +198,14 @@ export class MantenimientosDependenciaService {
       );
   }
 
+  getDependenciasArea(area): Observable<any> {
+    return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'Catalogo/catalogoDependencias/getArea/'+area)
+      .pipe(
+        catchError(this.handleError('getDependencias', []))
+      );
+  }
   getDataDependencia(idDependencia): Observable<any> {
+    console.log(this.appSettings.restApiServiceBaseUri + 'Dependencia/catalogoDependencias/'+ idDependencia +'/getDependencia');
     return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'Dependencia/catalogoDependencias/'+ idDependencia +'/getDependencia')
       .pipe(
         catchError(this.handleError('getDataDependencia', []))

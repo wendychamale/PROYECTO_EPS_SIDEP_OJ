@@ -71,7 +71,18 @@ public class CatalogoController {
       return Response.ok(new jsonResult(-1, "Error", e.getMessage())).build();
     } 
   }
-  
+  @GET
+  @Path("/catalogoDependencias/getArea/{estado_area}")
+  @Produces({"application/json"})
+			
+  public Response getDependenciaArea(@PathParam("p_dependencia") int ID_DEPENDENCIA,@PathParam("estado_area") String ESTADO_AREA) {
+    try {
+      return Response.ok(this.manager.catalogoDependenciasArea(ESTADO_AREA)).build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return Response.ok(new jsonResult(-1, "Error", e.getMessage())).build();
+    } 
+  }
   @GET
   @Path("/depCorreoCidej")
   @Produces({"application/json"})
