@@ -82,7 +82,15 @@ export class ActualizacionNominalComponent implements OnInit {
   fechaAnulacion;
   inicioVigRef;
   chkRefVigencia;
-
+//Variables para verificar que usuario esta logueado
+viewSecrePresi=false;
+viewSecretaria=false;
+viewPresidencia=false;
+viewNominas = false;
+viewUcpas = false;
+viewCidej=false;
+viewCit=false;
+viewAdmin=false;
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
     private router: Router,private route:ActivatedRoute
@@ -120,7 +128,8 @@ export class ActualizacionNominalComponent implements OnInit {
       inicioVigRef: [''],
       chkRefVigencia:['']      
     });
-
+ 
+    this.valProfile();
     this.updateNominal.get('codDependencia').valueChanges.subscribe((v)=> {if(v.length > 3){this.iniciaValDep = true }else{this.iniciaValDep = false}} );
     this.updateNominal.get('codPresupuestario').valueChanges.subscribe((v)=> {if(v.length > 3){this.iniciaValPres = true }else{this.iniciaValPres = false}});
     
@@ -136,6 +145,39 @@ export class ActualizacionNominalComponent implements OnInit {
         this.listArea = data;
       });
 
+  }
+
+  valProfile() {
+    // esto despues hay que quitarlo 
+
+this.viewSecretaria=true;
+this.viewPresidencia=false;
+this.viewUcpas = false;
+this.viewNominas = false;
+this.viewCidej=false;
+this.viewCit=false;
+this.viewSecrePresi=false;
+this.viewAdmin=false;
+
+if(this.viewSecretaria|| this.viewPresidencia){
+  this.viewSecrePresi=true;
+}
+if(this.viewAdmin){
+  this.viewSecrePresi=true;
+  this.viewUcpas = true;
+}
+
+if(this.viewCidej || this.viewCit||this.viewNominas){
+  this.viewSecrePresi=false;
+  this.viewUcpas = false;
+}
+  /*  for (var i = 0; i < this.session.PERFILES.length; i++) {
+      if (this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL) {
+        this.viewNominas = true;
+      } else if (this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL) {
+        this.viewUcpas = true;
+      }
+    }*/
   }
 
 

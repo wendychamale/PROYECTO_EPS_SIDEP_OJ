@@ -16,6 +16,7 @@ import { ConfirmarComponent } from '../gestiones/confirmar/confirmar.component';
 import { ViewComponent } from '../gestiones/view/view.component';
 import { ObservacionesComponent } from './observaciones/observaciones.component';
 import { EliminarComponent } from './eliminar/eliminar.component';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 interface TipoGestion {
   ID_TIPO: string;
@@ -108,9 +109,9 @@ export class GestionesComponent implements OnInit {
   valProfile(){
 // esto despues hay que quitarlo 
 
-this.viewSecretaria=false;
+this.viewSecretaria=true;
 this.viewPresidencia=false;
-this.viewUcpas = true;
+this.viewUcpas = false;
 this.viewNominas = false;
 this.viewCidej=false;
 this.viewCit=false;
@@ -160,7 +161,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   console.log('se buscara datos por '+verarea+"Proceso"+this.idEstado);
 
     if (verarea !='todos'){ //se busca por area especifica y
-      if(this.idEstado==2 && !this.viewNominas){
+      if(this.idEstado==4 ){//&& !this.viewNominas){
         this.idEstado=0;
       }
       this.mantenimientoDependenciaService.getGestionesArea(this.idEstado,0,verarea).subscribe(
@@ -168,7 +169,22 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
           if(data.length>0){ 
           this.gestiones = data;
           console.log(this.gestiones);
-         
+          var i=0;
+          for (i=0; i<this.gestiones.length ; i++){
+            if(this.gestiones[i].ID_ESTADO_PROCESO==1){
+              this.gestiones[i].ID_ESTADO_PROCESO='En Solicitud';
+            console.log("estado en solicitud");
+            }
+            if(this.gestiones[i].ID_ESTADO_PROCESO==2){
+              console.log("estado Finalizado Atendido");
+              this.gestiones[i].ID_ESTADO_PROCESO='Atendido';
+              }
+              if(this.gestiones[i].ID_ESTADO_PROCESO==3){
+                this.gestiones[i].ID_ESTADO_PROCESO='Rechazado';
+                console.log("estado Finalizado Rechazado");
+                }
+
+          }
           this.dataSource = new MatTableDataSource(this.gestiones);
             
         }else{ 
@@ -188,7 +204,21 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
           if(data.length>0){ 
           this.gestiones = data;
           console.log(this.gestiones);
-         
+          var i=0;
+          for (i=0; i<this.gestiones.length ; i++){
+            if(this.gestiones[i].ID_ESTADO_PROCESO==1){
+              this.gestiones[i].ID_ESTADO_PROCESO='En Solicitud';
+            console.log("estado en solicitud");
+            }
+            if(this.gestiones[i].ID_ESTADO_PROCESO==2){
+              console.log("estado Finalizado Atendido");
+              this.gestiones[i].ID_ESTADO_PROCESO='Atendido';
+              }
+              if(this.gestiones[i].ID_ESTADO_PROCESO==3){
+                this.gestiones[i].ID_ESTADO_PROCESO='Rechazado';
+                console.log("estado Finalizado Rechazado");
+                }
+              }
           this.dataSource = new MatTableDataSource(this.gestiones);
             
         }else{ 
@@ -381,7 +411,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
         PROCESO_ESTADO_AREA:area
 
    };
-  if (tipo==0){
+  //if (tipo==0){
     this.mantenimientoDependenciaService.rechazoGestion(gestion).subscribe(
       data => {
         if(data.result=='ok'){
@@ -391,7 +421,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
           swal("Error", data.msj, "error")
         } 
       });
-  }else{
+ /* }else{
     this.mantenimientoDependenciaService.rechazoGestion1(gestion).subscribe(
       data => {
         if(data.result=='ok'){
@@ -402,7 +432,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
         } 
       });
   }
-    
+    */
 
   }
 

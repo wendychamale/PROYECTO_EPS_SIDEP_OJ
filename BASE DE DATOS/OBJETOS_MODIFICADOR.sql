@@ -7,11 +7,12 @@
   ID_GESTION NUMBER      NOT NULL,
   ID_USUARIO_ATENDIO     NUMBER   NOT NULL,
   AREA_ATENDIO           VARCHAR2(30 BYTE)      NOT NULL,
-  ID_GESTION_DEPENDENCIA NUMBER     NOT NULL
+  ID_GESTION_DEPENDENCIA NUMBER     NOT NULL,
+  ACCION NUMBER     NOT NULL
 )
 /
 CREATE UNIQUE INDEX SIDEP.PK_DEPENDENCIAS_AREA_ATENDIDA ON SIDEP.DEPENDENCIAS_AREA_ATENDIDA
-(ID_USUARIO_ATENDIO,AREA_ATENDIO,ID_GESTION_DEPENDENCIA)
+(ID_USUARIO_ATENDIO,AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION)
 TABLESPACE USERS
 PCTFREE    10
 INITRANS   2
@@ -31,7 +32,7 @@ STORAGE    (
 ALTER TABLE SIDEP.DEPENDENCIAS_AREA_ATENDIDA ADD (
 CONSTRAINT PK_DEPENDENCIAS_AREA_ATENDIDA
   PRIMARY KEY
-  (ID_USUARIO_ATENDIO,AREA_ATENDIO,ID_GESTION_DEPENDENCIA)
+  (ID_USUARIO_ATENDIO,AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION)
   USING INDEX SIDEP.PK_DEPENDENCIAS_AREA_ATENDIDA
   ENABLE VALIDATE);
 /
@@ -47,6 +48,7 @@ COMMENT ON TABLE SIDEP.DEPENDENCIAS_AREA_ATENDIDA.ID_GESTION IS 'Codigo de gesti
 COMMENT ON COLUMN SIDEP.DEPENDENCIAS_AREA_ATENDIDA.ID_USUARIO_ATENDIO IS 'Usuario que atendio la gestion';
 COMMENT ON COLUMN SIDEP.DEPENDENCIAS_AREA_ATENDIDA.AREA_ATENDIO IS 'area que atendio la gestion';
 COMMENT ON COLUMN SIDEP.DEPENDENCIAS_AREA_ATENDIDA.ID_GESTION_DEPENDENCIA IS 'Numero de gestion de la dependencia atendida';
+COMMENT ON COLUMN SIDEP.DEPENDENCIAS_AREA_ATENDIDA.ACCION IS 'Accion realizada sobre la gestion';
 /
 */
 --paqutee de creacion 
@@ -319,6 +321,7 @@ IS
 BEGIN
 declare 
 area varchar(30):='';
+contador number:=0;
 begin 
    if((UPPER(p_proceso_estado_area)='PRESIDENCIA') or (UPPER(p_proceso_estado_area)='SECRETARIA'))
    then
@@ -389,20 +392,21 @@ begin
                 area );
           
           --Inserta en las areas que atienden la dependencia 
+         
              INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(
                                                           ID_GESTION,
                                                           ID_USUARIO_ATENDIO,
                                                           AREA_ATENDIO,
-                                                          ID_GESTION_DEPENDENCIA
+                                                          ID_GESTION_DEPENDENCIA,
+                                                          ACCION
                                                           )
                                                           values(
                                                           SIDEP.SQ_DEP_ATENDIDAS.nextval,
                                                           p_id_usuario_registro,
                                                           p_proceso_estado_area,
-                                                          p_id_gestion_dependencia
-                                                          );
-                                                           
-                                                          
+                                                          p_id_gestion_dependencia,
+                                                          1 -- 1 en proceso
+                                                          );                                               
  end;               
 END PROC_INS_TT_GEST_DEPENDENCIA; --fin de procedure PROC_INS_TT_GEST_DEPENDENCIA
 
@@ -1131,10 +1135,10 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 A.ID_ESTADO = 1 
                 AND B.ID_ESTADO_PROCESO = DECODE(P_ID_ESTADO_PROCESO,0, B.ID_ESTADO_PROCESO,P_ID_ESTADO_PROCESO) 
                 AND C.ID_TIPO_GESTION = DECODE(p_id_tipo_gestion, 0, C.ID_TIPO_GESTION, p_id_tipo_gestion) 
-                AND ((P_ID_ESTADO_PROCESO=2 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area))OR (P_ID_ESTADO_PROCESO!=2))
-                AND ((P_ID_ESTADO_PROCESO=0 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area ))OR (P_ID_ESTADO_PROCESO!=0))
+                AND ((P_ID_ESTADO_PROCESO=2 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area) AND ((A.ID_ESTADO_PROCESO=F.ACCION and p_proceso_estado_area='NOMINAS' )or p_proceso_estado_area!='NOMINAS'))OR (P_ID_ESTADO_PROCESO!=2))
+                AND ((P_ID_ESTADO_PROCESO=0 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area ) AND(( A.ID_ESTADO_PROCESO=F.ACCION and p_proceso_estado_area='NOMINAS') or p_proceso_estado_area!='NOMINAS'))OR (P_ID_ESTADO_PROCESO!=0))
                 AND ((P_ID_ESTADO_PROCESO=3 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area))OR (P_ID_ESTADO_PROCESO!=3))
-            
+                AND ((A.PROCESO_ESTADO_AREA=p_proceso_estado_area AND ACCION=P_ID_ESTADO_PROCESO) OR (p_proceso_estado_area='NOMINAS') OR (ACCION!=3 AND A.PROCESO_ESTADO_AREA=p_proceso_estado_area) OR P_ID_ESTADO_PROCESO=0   OR P_ID_ESTADO_PROCESO=2)
             ORDER BY FECHA_REGISTRO DESC; 
     end if;
       
@@ -1329,6 +1333,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
         ruta TT_GEST_DEPENDENCIA.ACUERDO_DIGITAL%TYPE;
         p_estadop   number;
         area varchar(30):='';
+        contador number:=0;
     BEGIN
         ruta := p_ruta_archivo || TO_CHAR(p_id_gestion_dependencia) || chr(47)  ||p_nombre_archivo;
            if((UPPER(p_proceso_estado_area)='PRESIDENCIA') or (UPPER(p_proceso_estado_area)='SECRETARIA'))
@@ -1368,13 +1373,24 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                OBS_FECHA_VIGENCIA     = p_obs_fecha_vigencia,
                PROCESO_ESTADO_AREA    = area
         WHERE  ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
-        begin
-        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA )
-               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, p_proceso_estado_area, p_id_gestion_dependencia);
-       EXCEPTION
-        WHEN OTHERS THEN
-           p_id_salida := p_id_gestion_dependencia;    
-        end;
+  --      begin
+   begin 
+            select count(1) into contador from SIDEP.DEPENDENCIAS_AREA_ATENDIDA 
+            where  ID_USUARIO_ATENDIO =  p_id_usuario_registro
+            and AREA_ATENDIO= p_proceso_estado_area
+            and ID_GESTION_DEPENDENCIA= p_id_gestion_dependencia
+            and ACCION =1;
+            EXCEPTION WHEN OTHERS THEN
+            contador:=1;
+            end;
+            if (contador=0) then 
+        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION )
+               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, p_proceso_estado_area, p_id_gestion_dependencia,1);
+            end if;
+   --    EXCEPTION
+  --      WHEN OTHERS THEN
+    --       p_id_salida := p_id_gestion_dependencia;    
+   --     end;
         
         p_id_salida := p_id_gestion_dependencia; 
         
@@ -2164,13 +2180,13 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             ID_USUARIO_REGISTRO = p_id_usuario_registro
         WHERE ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
         
-          begin
-        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA )
-               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, p_proceso_estado_area, p_id_gestion_dependencia);
-       EXCEPTION
-        WHEN OTHERS THEN
-           p_id_salida := p_codigo_dependencia;    
-        end;
+      --    begin
+        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION )
+               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, p_proceso_estado_area, p_id_gestion_dependencia, 2);
+    --   EXCEPTION
+    --    WHEN OTHERS THEN
+        --   p_id_salida := p_codigo_dependencia;    
+    --    end;
         
         p_id_salida := p_codigo_dependencia;
         p_msj := 'ok';
@@ -2199,7 +2215,18 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
         AS
     BEGIN
   
-        
+        declare 
+area varchar(30):='';
+begin 
+   if((UPPER(p_proceso_estado_area)='PRESIDENCIA') or (UPPER(p_proceso_estado_area)='SECRETARIA'))
+   then
+     area:='UCPAS';
+   end if;
+    if(UPPER(p_proceso_estado_area)='UCPAS')
+    then
+     area:='NOMINAS';
+   end if;
+   
         UPDATE TT_GEST_DEPENDENCIA
         SET
             ID_ESTADO_PROCESO = PKG_CONSTANTES.RECHAZADA,
@@ -2210,13 +2237,13 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             PROCESO_ESTADO_AREA= p_proceso_estado_area
         WHERE
             ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
-       begin
-        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA )
-               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, 'NOMINAS', p_id_gestion_dependencia);
-       EXCEPTION
-        WHEN OTHERS THEN
+      -- begin
+        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA ,ACCION)
+               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, area, p_id_gestion_dependencia,3);
+     --  EXCEPTION
+     --   WHEN OTHERS THEN
            p_id_salida := p_id_gestion_dependencia;    
-        end;
+      --  end;
             
         p_id_salida := p_id_gestion_dependencia;
         p_msj := 'ok';
@@ -2232,7 +2259,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             || dbms_utility.format_error_stack
             || '-ERROR_BACKTRACE-'
             || dbms_utility.format_error_backtrace;     
-    
+    end;
     END PROC_RECHAZA_SOLOLICITUD;
 
  PROCEDURE PROC_RECHAZA_SOLOLICITUD_AREA(
