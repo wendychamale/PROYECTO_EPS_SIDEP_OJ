@@ -33,6 +33,10 @@ export const AppRoutes: Routes = [
             loadChildren: './mantenimientos-dependencia/mantenimientos-dependencia.module#MantenimientosDependenciaModule',
             //data: {paginas: [33]},
             //canActivate:[validarPermisos]
+        },
+        {
+            path: 'organigrama',
+            loadChildren: './organigrama/organigrama.module#OrganigramaModule',
         }
     ]
     }, 

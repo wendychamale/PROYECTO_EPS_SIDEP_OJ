@@ -102,7 +102,7 @@ import localesGT from '@angular/common/locales/es-GT';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule
-  ]
+  ],
 })
 export class MaterialModule {}
 
