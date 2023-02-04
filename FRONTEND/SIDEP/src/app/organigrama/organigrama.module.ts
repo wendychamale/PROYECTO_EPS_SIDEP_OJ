@@ -6,6 +6,7 @@ import { OrganigramaRoutingModule} from './organigrama-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../app.module';
 import { SelectModule } from 'ng2-select';
+import {MatTreeModule } from '@angular/material/tree';
 
 @NgModule({
   declarations: [ JerarquiaComponent],
@@ -15,7 +16,8 @@ import { SelectModule } from 'ng2-select';
     FormsModule,
     MaterialModule,
     SelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTreeModule
   ],
 })
 export class OrganigramaModule { }

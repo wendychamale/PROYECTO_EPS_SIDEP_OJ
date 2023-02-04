@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { APP_BASE_HREF, DatePipe,registerLocaleData  } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import {MatTreeModule} from '@angular/material/tree';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -68,7 +69,7 @@ import { MatPaginatorIntlEspaniol } from './pagineo';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
 import localesGT from '@angular/common/locales/es-GT';
-
+import {BrowserModule} from '@angular/platform-browser';
 @NgModule({
   exports: [
     MatAutocompleteModule,
@@ -121,6 +122,9 @@ registerLocaleData(localesGT, 'es-GT');
         FooterModule,
         HttpClientModule,
         ReactiveFormsModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        MatTreeModule,
         BlockUIModule.forRoot({
           template: BlockTemplateComponent
         }), // Import BlockUIModule
