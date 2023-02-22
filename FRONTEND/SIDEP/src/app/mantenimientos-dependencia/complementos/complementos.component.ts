@@ -136,6 +136,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
 
       dialogRef.afterClosed().subscribe(result => {
         if(result != undefined){
+          console.log(result);
              this.saveCorreo(result);
         }
       });
@@ -159,6 +160,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
        data => {
          if(data.result=='OK'){
            swal("Correo Agregado Exitosamente", "", "success")
+           this.loadDependencias();
           }else{
            swal("Error", data.msj, "error")
          } 
@@ -200,6 +202,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
        data => {
          if(data.result=='OK'){
            swal("Código Despacho Agregado Exitosamente", "", "success")
+           this.loadDependencias();
           }else{
            swal("Error", data.msj, "error")
          } 

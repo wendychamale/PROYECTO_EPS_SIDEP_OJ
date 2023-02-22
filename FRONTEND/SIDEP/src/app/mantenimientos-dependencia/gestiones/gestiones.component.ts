@@ -109,10 +109,10 @@ export class GestionesComponent implements OnInit {
   valProfile(){
 // esto despues hay que quitarlo 
 
-this.viewSecretaria=true;
+this.viewSecretaria=false;
 this.viewPresidencia=false;
 this.viewUcpas = false;
-this.viewNominas = false;
+this.viewNominas = true;
 this.viewCidej=false;
 this.viewCit=false;
 this.viewSecrePresi=false;
