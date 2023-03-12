@@ -2410,7 +2410,7 @@ begin
             STATUS_PLAZA <> 'C';
         
         IF P_PLAZA = 0 THEN
-            UPDATE RH_DEPENDENCIA 
+            UPDATE RRHH.RH_DEPENDENCIA 
                 SET DEPENDENCIA_VIGENTE = 'N', FECHA_ANULACION_DEPENDENCIA = P_FECHA_ANULACION, 
                     REFERENCIA = P_REFERENCIA, FECHA_MODIFICACION = SYSDATE , USUARIO_MODIFICO = P_USUARIO,
                     ACUERDO_DIGITAL = p_acuerdo_digital
