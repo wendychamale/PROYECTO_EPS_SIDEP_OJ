@@ -32,7 +32,7 @@ public class RegulaDependenciaManager {
       salida = this.creaSolicitud.insDependencia(ttDependencia, conn);
       if (salida.id > 0) {
         ttDependencia.ID_SOLICITUD = (new StringBuilder(String.valueOf(salida.id))).toString();
-        boolean cargaArchivo = this.archivo.guardarArchivo(ttDependencia).booleanValue();
+        boolean cargaArchivo = true;//this.archivo.guardarArchivo(ttDependencia).booleanValue();
         if (cargaArchivo) {
           salida.result = "OK";
           conn.commit();
