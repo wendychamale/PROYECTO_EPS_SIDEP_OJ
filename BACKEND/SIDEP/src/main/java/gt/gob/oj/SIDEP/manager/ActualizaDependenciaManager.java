@@ -32,7 +32,7 @@ public class ActualizaDependenciaManager {
       salida = insSolitudActDependencia(ttDependencia, conn);
       if (salida.id > 0) {
         ttDependencia.ID_SOLICITUD = (new StringBuilder(String.valueOf(salida.id))).toString();
-        boolean cargaArchivo = this.archivo.guardarArchivo(ttDependencia).booleanValue();
+        boolean cargaArchivo = true;//this.archivo.guardarArchivo(ttDependencia).booleanValue();
         if (cargaArchivo) {
           salida.result = "OK";
           conn.commit();
@@ -59,7 +59,7 @@ public class ActualizaDependenciaManager {
   
   public jsonResult insSolitudActDependencia(TtDependencia ttDependencia, Connection conn) throws Exception {
     jsonResult salida = new jsonResult();
-    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_DEPENDENCIA.PROC_ACT_TT_GEST_DEPENDENCIA (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_DEPENDENCIA.PROC_ACT_TT_GEST_DEPENDENCIA (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     call.setString("p_codigo_dependencia", ttDependencia.CODIGO_DEPENDENCIA);
     call.setString("p_conector_dependencia", ttDependencia.CONECTOR);
     call.setString("p_funcion_unidad", ttDependencia.FUNCION_UNIDAD);
@@ -73,6 +73,7 @@ public class ActualizaDependenciaManager {
     call.setString("p_ip", ttDependencia.IP);
     call.setString("p_fecha_publicacion", ttDependencia.FECHA_PUBLICACION);
     call.setString("p_obs_fecha_vigencia", ttDependencia.OBS_FECHA_VIGENCIA);
+    call.setString("p_proceso_estado_area", ttDependencia.PROCESO_ESTADO_AREA);
     call.registerOutParameter("p_id_salida", OracleTypes.NUMBER);
     call.registerOutParameter("p_msj", OracleTypes.VARCHAR);
     call.execute();

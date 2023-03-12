@@ -1,5 +1,7 @@
-
+--drop TRIGGER "RRHH"."TRGBUDIRECCION" ;
+--drop TRIGGER "SIDEP"."TRGBUDIRECCION" ;
 --ALTER TABLE TT_GEST_DEPENDENCIA ADD  PROCESO_ESTADO_AREA VARCHAR2(100 BYTE); 
+--ALTER TABLE DEPENDENCIAS_AREA_ATENDIDA ADD  TIPO_GESTION VARCHAR2(100 BYTE); 
 
 --/*
 /*CREATE TABLE SIDEP.DEPENDENCIAS_AREA_ATENDIDA
@@ -51,6 +53,61 @@ COMMENT ON COLUMN SIDEP.DEPENDENCIAS_AREA_ATENDIDA.ID_GESTION_DEPENDENCIA IS 'Nu
 COMMENT ON COLUMN SIDEP.DEPENDENCIAS_AREA_ATENDIDA.ACCION IS 'Accion realizada sobre la gestion';
 /
 */
+
+CREATE OR REPLACE PACKAGE BODY SIDEP.RH_PKG AS
+
+      -- PARAMETROS GENERALES
+      
+      -- ----------------------------------------------------------------------------------------------------------
+      -- Procedimiento general de RRHH
+      --  ---------------------------------------------------------------------------------------------------------
+
+
+      FUNCTION vDepartamento ( PRMPais in number, PRMDepartamento in number, VNombreDepartamento out rh_departamento.nombre_departamento%type ) return boolean is
+      begin
+            select nombre_departamento into VNombreDepartamento
+            from RRHH.rh_departamento
+            where pais = PRMPais
+            and   departamento = PRMDepartamento;
+            return true;  
+      exception when no_data_found then
+            return false; 
+      end; 
+            
+      FUNCTION Departamento ( PRMPais in number, PRMDepartamento in number ) return varchar2 is
+        VNombreDepartamento rh_departamento.nombre_departamento%type; 
+      begin      
+            if vDepartamento( PRMPais, PRMDepartamento, VNombreDepartamento ) then
+                return VNombreDepartamento; 
+            else
+                return 'Codigo no valido'; 
+            end if;
+      end;  
+
+      FUNCTION vMunicipio( PRMPais in number, PRMDepartamento in number, PRMMunicipio in number, VNombreMunicipio out rh_municipio.nombre_municipio%type ) return boolean is
+      begin
+            select nombre_municipio into VNombreMunicipio
+            from RRHH.rh_municipio
+            where pais = PRMPais
+            and   departamento = PRMDepartamento
+            and   municipio = PRMMunicipio;            
+            return true;  
+      exception when no_data_found then
+            return false; 
+      end;  
+            
+      FUNCTION Municipio( PRMPais in number, PRMDepartamento in number, PRMMunicipio in number ) return varchar2 is
+        VNombreMunicipio rh_municipio.nombre_municipio%type;       
+      begin      
+            if vMunicipio( PRMPais, PRMDepartamento, PRMMunicipio, VNombreMunicipio ) then
+                return VNombreMunicipio; 
+            else
+                return 'Codigo no valido'; 
+            end if;
+      end;  
+
+END;
+/
 --paqutee de creacion 
 
 
@@ -322,12 +379,17 @@ BEGIN
 declare 
 area varchar(30):='';
 contador number:=0;
+ACCION varchar(30):='';
 begin 
    if((UPPER(p_proceso_estado_area)='PRESIDENCIA') or (UPPER(p_proceso_estado_area)='SECRETARIA'))
    then
      area:='UCPAS';
    end if;
     if(UPPER(p_proceso_estado_area)='UCPAS')
+    then
+     area:='NOMINAS';
+   end if;
+   if(UPPER(p_proceso_estado_area)='NOMINAS')
     then
      area:='NOMINAS';
    end if;
@@ -398,14 +460,16 @@ begin
                                                           ID_USUARIO_ATENDIO,
                                                           AREA_ATENDIO,
                                                           ID_GESTION_DEPENDENCIA,
-                                                          ACCION
+                                                          ACCION,
+                                                          TIPO_GESTION
                                                           )
                                                           values(
                                                           SIDEP.SQ_DEP_ATENDIDAS.nextval,
                                                           p_id_usuario_registro,
                                                           p_proceso_estado_area,
                                                           p_id_gestion_dependencia,
-                                                          1 -- 1 en proceso
+                                                          1,-- CREACION,
+                                                          p_id_tipo_gestion
                                                           );                                               
  end;               
 END PROC_INS_TT_GEST_DEPENDENCIA; --fin de procedure PROC_INS_TT_GEST_DEPENDENCIA
@@ -449,7 +513,7 @@ PROCEDURE proc_ins_rh_dependencia (
    FECHA ULTIMA MODIFICACION= 
 */
 BEGIN
-    INSERT INTO rh_dependencia (
+    INSERT INTO RRHH.rh_dependencia (
         dependencia,
         id_direccion,
         nombre_dependencia,
@@ -1082,7 +1146,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 A.PROCESO_ESTADO_AREA
             FROM SIDEP.TT_GEST_DEPENDENCIA A
                 INNER JOIN TS_ESTADO_PROCESO B ON A.ID_ESTADO_PROCESO = B.ID_ESTADO_PROCESO 
-                INNER JOIN TS_TIPO_GESTION C ON A.ID_TIPO_GESTION = C.ID_TIPO_GESTION 
+                INNER JOIN RRHH.TS_TIPO_GESTION C ON A.ID_TIPO_GESTION = C.ID_TIPO_GESTION 
                 INNER JOIN TC_USUARIO D ON A.ID_USUARIO_REGISTRO = D.ID_USUARIO
                 INNER JOIN RRHH.RH_TIPO_AREA E ON A.TIPO_AREA = E.ID_AREA
                 WHERE
@@ -1126,7 +1190,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 A.PROCESO_ESTADO_AREA
             FROM SIDEP.TT_GEST_DEPENDENCIA A
                 INNER JOIN TS_ESTADO_PROCESO B ON A.ID_ESTADO_PROCESO = B.ID_ESTADO_PROCESO 
-                INNER JOIN TS_TIPO_GESTION C ON A.ID_TIPO_GESTION = C.ID_TIPO_GESTION 
+                INNER JOIN RRHH.TS_TIPO_GESTION C ON A.ID_TIPO_GESTION = C.ID_TIPO_GESTION 
                 INNER JOIN TC_USUARIO D ON A.ID_USUARIO_REGISTRO = D.ID_USUARIO
                 INNER JOIN RRHH.RH_TIPO_AREA E ON A.TIPO_AREA = E.ID_AREA
                 INNER JOIN SIDEP.DEPENDENCIAS_AREA_ATENDIDA F ON F.ID_GESTION_DEPENDENCIA = A.ID_GESTION_DEPENDENCIA
@@ -1586,7 +1650,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 A.REFERENCIA,
                 A.FECHA_PUBLICACION,
                 a.obs_fecha_vigencia
-            FROM SIDEP.RH_DEPENDENCIA A
+            FROM RRHH.RH_DEPENDENCIA A
                 INNER JOIN SIDEP.RH_DIRECCION_DEPENDENCIA B ON A.ID_DIRECCION = B.ID_DIRECCION
                 LEFT JOIN SIDEP.RH_TIPO_AREA C ON A.ID_AREA = C.ID_AREA
             WHERE 
@@ -2065,6 +2129,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             /*Realiza el proceso de duplicar el registro de dependencia correo cuando se regulariza y cambia de codio de dependencia*/
             OPEN DEPENDENCIA_CORREO(PRM_DEPENDENCIA);
                 FETCH DEPENDENCIA_CORREO INTO p_correo_electronico;
+                
                 IF DEPENDENCIA_CORREO%FOUND THEN
                     BEGIN
                         PROC_INS_TT_DEP_CORREO(
@@ -2094,7 +2159,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                             || dbms_utility.format_error_backtrace;
                     END;
                 END IF;
-            CLOSE DEPENDENCIA_DESPACHO;
+            CLOSE DEPENDENCIA_CORREO;
             p_id_salida := p_codigo_dependencia;
             p_msj := 'ok';
     EXCEPTION
@@ -2403,9 +2468,10 @@ begin
             NOMBRE_DEPENDENCIA, NOMBRE_GAFETE, NOMBRE_ABREVIADO, NOMBRE_DEPENDENCIA_DOCUMENTO, CODIGO_PRESUPUESTARIO, DD.DEPARTAMENTO, DD.MUNICIPIO
         INTO 
             p_nombre_dependencia, p_nombre_gafete, p_nombre_abreviado, p_nombre_documento, p_codigo_presupuestario, p_dep, p_mun
-        FROM SIDEP.RH_DEPENDENCIA D INNER JOIN SIDEP.RH_DIRECCION_DEPENDENCIA DD ON D.ID_DIRECCION = DD.ID_DIRECCION
+        FROM RRHH.RH_DEPENDENCIA D INNER JOIN SIDEP.RH_DIRECCION_DEPENDENCIA DD ON D.ID_DIRECCION = DD.ID_DIRECCION
         WHERE DEPENDENCIA = p_codigo_dependencia;   
         ruta := p_ruta_archivo || TO_CHAR(p_id_salida) || chr(47)  ||p_nombre_archivo;
+        
         
         PKG_INSERTS.PROC_INS_TT_GEST_DEPENDENCIA (
             p_id_gestion_dependencia => p_id_salida,
@@ -2534,7 +2600,8 @@ begin
         FROM TT_GEST_DEPENDENCIA
         WHERE 
             ID_GESTION_DEPENDENCIA = p_id_gest_dependencia;
-        UPDATE RH_DEPENDENCIA SET
+            
+        UPDATE RRHH.RH_DEPENDENCIA SET
             CONECTOR_DEPENDENCIA = p_conector_dependencia, FUNCION_UNIDAD = p_funcion_unidad, REFERENCIA = p_referencia,
             ID_AREA = p_id_area, ACUERDO_DIGITAL = p_acuerdo_digital, FECHA_CREACION_DEPENDENCIA = p_fecha_creacion_dependencia,
             FECHA_ENTRA_VIGENCIA = p_fecha_entra_vigencia, USUARIO_CREADOR = p_usuario, FECHA_MODIFICACION = SYSDATE, 
