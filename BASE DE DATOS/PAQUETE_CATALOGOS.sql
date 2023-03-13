@@ -170,7 +170,7 @@ CREATE OR REPLACE PACKAGE BODY RRHH."PKG_CATALOGOS" AS
         AS
     BEGIN
         OPEN P_CUR_DATASET FOR 
-           select * from (SELECT
+           SELECT
                 DEP.DEPENDENCIA,
                 DEP.NOMBRE_DEPENDENCIA,
                 DCO.ID_DEPENDENCIA_CORREO,
@@ -185,22 +185,8 @@ CREATE OR REPLACE PACKAGE BODY RRHH."PKG_CATALOGOS" AS
             WHERE 
                 DEPENDENCIA_VIGENTE = 'S' AND 
                 UNIDAD_PRESUPUESTARIA = 'S'
-             UNION 
-                         SELECT
-                DE.CODIGO_DEPENDENCIA DEPENDENCIA,
-                DE.NOMBRE_DEPENDENCIA,
-                DC.ID_DEPENDENCIA_CORREO,
-                DC.CORREO_ELECTRONICO,
-                DR.ID_DEP_RH_CIDEJ,
-                DR.ID_DESPACHO,
-                DE.FECHA_REGISTRO FECHA_CREACION_DEPENDENCIA
-            FROM 
-                 SIDEP.TT_GEST_DEPENDENCIA DE
-                 LEFT JOIN RRHH.TT_DEPENDENCIA_CORREO DC ON DE.CODIGO_DEPENDENCIA = DC.DEPENDENCIA AND DC.ID_ESTADO = 1
-                 LEFT JOIN RRHH.TT_DEPENDENCIA_RH_CIDEJ DR ON DE.CODIGO_DEPENDENCIA = DR.DEPENDENCIA AND DR.ID_ESTADO = 1          
-            WHERE 
-                DE.id_estado_proceso=2) T
-          order by t.FECHA_CREACION_DEPENDENCIA;  
+            
+          order by DEP.FECHA_CREACION_DEPENDENCIA;  
     END PROC_GET_CORREOCIDEJ; 
     
     
