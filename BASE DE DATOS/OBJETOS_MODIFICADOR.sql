@@ -394,6 +394,15 @@ begin
      area:='NOMINAS';
    end if;
    
+   if(p_id_tipo_gestion=2)
+   then
+   area:='NOMINAS';
+   end if;
+   if(p_id_tipo_gestion=3)
+   then
+   area:='NOMINAS';
+   end if;
+   
    INSERT INTO TT_GEST_DEPENDENCIA (ID_GESTION_DEPENDENCIA,
                                     CODIGO_DEPENDENCIA,
                                     CODIGO_PRESUPUESTARIO,
@@ -780,6 +789,8 @@ END PKG_INSERTS;
 -- PKG_DEPENDENCIA  (Package) 
 --
 CREATE OR REPLACE PACKAGE SIDEP.PKG_DEPENDENCIA AS
+    PROCEDURE PROC_GET_NOMINAL_BAJA(P_CODIGO_PRESUPUESTARIO RRHH.RH_DEPENDENCIA.codigo_presupuestario%TYPE, p_id_salida OUT NUMBER, p_msj OUT VARCHAR2);
+   
     PROCEDURE PROC_VALIDA_DEPENDENCIA(P_DEPENDENCIA RH_DEPENDENCIA.DEPENDENCIA%TYPE, P_VALOR NUMBER, p_id_salida OUT NUMBER, p_msj OUT VARCHAR2);
     PROCEDURE PROC_GET_GEST_DEPENDENCIA (
         p_id_estado_proceso   tt_gest_dependencia.id_estado_proceso%type DEFAULT 0,
@@ -1049,6 +1060,78 @@ END PKG_DEPENDENCIA;
 -- PKG_DEPENDENCIA  (Package Body) 
 --
 CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
+      /* Obitne la lista de todas las gestiones*/
+    PROCEDURE PROC_GET_NOMINAL_BAJA (
+    P_CODIGO_PRESUPUESTARIO RRHH.RH_DEPENDENCIA.codigo_presupuestario%TYPE, 
+    p_id_salida OUT NUMBER,
+    p_msj OUT VARCHAR2
+    )
+        AS
+        p_codigo_dependencia_r RRHH.RH_DEPENDENCIA.DEPENDENCIA%TYPE;
+        valida_plaza number;
+        p_codigo_dependencia  TT_GEST_DEPENDENCIA.CODIGO_DEPENDENCIA%TYPE;
+        p_codigo_presupuestario1 TT_GEST_DEPENDENCIA.CODIGO_PRESUPUESTARIO%TYPE;
+        p_nombre_dependencia TT_GEST_DEPENDENCIA.NOMBRE_DEPENDENCIA%TYPE;
+        p_fecha_anulacion TT_GEST_DEPENDENCIA.FECHA_ANULACION%TYPE;
+        p_referencia TT_GEST_DEPENDENCIA.REFERENCIA%TYPE;
+        p_id_usuario_registro TT_GEST_DEPENDENCIA.ID_USUARIO_REGISTRO%TYPE;
+        p_nombre_archivo TT_GEST_DEPENDENCIA.NOMBRE_DOCUMENTO%TYPE;
+      --  p_ruta_archivo TT_GEST_DEPENDENCIA.RUTA%TYPE;
+        p_ip TT_GEST_DEPENDENCIA.IP%TYPE;
+         p_id_gestion_dependencia    tt_gest_dependencia.id_gestion_dependencia%type;
+        p_observaciones             tt_gest_dependencia.observaciones%type;
+    BEGIN
+          begin
+           SELECT DEPENDENCIA INTO p_codigo_dependencia_r FROM RRHH.rh_dependencia 
+           WHERE CODIGO_PRESUPUESTARIO=P_CODIGO_PRESUPUESTARIO
+           and dependencia_vigente='S';
+           EXCEPTION WHEN OTHERS THEN
+            p_id_salida:=-1;
+            p_msj:='Error al obtener dato';
+            end;
+            
+            PKG_DEPENDENCIA.PROC_GET_PLAZAS_DEPENDENCIA(
+            p_codigo_dependencia => p_codigo_dependencia_r,
+            p_id_salida => p_id_salida,
+            p_msj => p_msj);
+             
+            if p_id_salida<0 
+            then
+            p_msj:='Error dependencia tiene plazas no puede ser regularizada';
+            ELSE
+             SELECT CODIGO_DEPENDENCIA,codigo_presupuestario,nombre_dependencia, referencia,id_usuario_registro,nombre_documento,ip, id_gestion_dependencia
+             INTO P_CODIGO_DEPENDENCIA,p_codigo_presupuestario1,p_nombre_dependencia,p_referencia, p_id_usuario_registro,p_nombre_archivo ,p_ip,p_id_gestion_dependencia
+             FROM SIDEP.TT_GEST_DEPENDENCIA
+             WHERE CODIGO_DEPENDENCIA=p_codigo_dependencia_r;
+            
+          /*  PKG_DEPENDENCIA.PROC_BAJA_TT_GEST_DEPENDENCIA (
+            p_codigo_dependencia => P_CODIGO_DEPENDENCIA,
+            p_codigo_presupuestario => p_codigo_presupuestario1,
+            p_nombre_dependencia => p_nombre_dependencia,
+            p_fecha_anulacion => to_date(SYSDATE,'dd/mm/yyyy'),
+            p_referencia=>p_referencia,
+            p_id_usuario_registro => p_id_usuario_registro,
+            p_nombre_archivo => p_nombre_archivo,
+            p_ruta_archivo=> null,
+            p_ip=> p_ip,
+            p_id_salida => p_id_salida,
+            p_msj => p_msj);*/
+            
+            PROC_BAJA_DEPENDENCIA(
+        p_id_gestion_dependencia =>p_id_gestion_dependencia,
+        p_observaciones=>p_observaciones,
+        p_ip=>p_ip,
+        p_id_usuario_registro => p_id_usuario_registro,
+        p_usuario=> user,
+        p_id_salida=>p_id_salida,
+        p_msj =>p_msj) ;
+        
+             end if;
+            
+               
+    END PROC_GET_NOMINAL_BAJA;
+    
+    
     
     /* Obitne la lista de todas las gestiones*/
     PROCEDURE PROC_GET_GEST_DEPENDENCIA (
@@ -1159,6 +1242,12 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
       else 
        OPEN P_CUR_DATASET FOR 
             /* Formatted on 05/09/2022  */
+             SELECT  DISTINCT ID_GESTION_DEPENDENCIA,CODIGO_DEPENDENCIA,CODIGO_PRESUPUESTARIO,NOMBRE_DEPENDENCIA,NOMBRE_GAFETE,
+  NOMBRE_ABREVIADO,NOMBRE_DOCUMENTO,CONECTOR,FECHA_DEL_ACUERDO,FECHA_ENTRA_VIGENCIA,FECHA_ANULACION,REFERENCIA,
+  FUNCION_UNIDAD,DEPARTAMENTO,RH_PKG.DEPARTAMENTO(1,DEPARTAMENTO) NOMBRE_DEPARTAMENTO,MUNICIPIO,RH_PKG.MUNICIPIO(1,DEPARTAMENTO,MUNICIPIO) NOMBRE_MUNICIPIO,
+  TIPO_AREA,NOMBRE_AREA, ACUERDO_DIGITAL,OBSERVACIONES, ID_ESTADO_PROCESO,ESTADO_PROCESO,ID_TIPO_GESTION, TIPO_GESTION, nombre,FECHA_PUBLICACION,
+  obs_fecha_vigencia,PROCESO_ESTADO_AREA
+                FROM ( 
             SELECT A.ID_GESTION_DEPENDENCIA,
                 CODIGO_DEPENDENCIA,
                 CODIGO_PRESUPUESTARIO,
@@ -1203,7 +1292,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
                 AND ((P_ID_ESTADO_PROCESO=0 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area ) AND(( A.ID_ESTADO_PROCESO=F.ACCION and p_proceso_estado_area='NOMINAS') or p_proceso_estado_area!='NOMINAS'))OR (P_ID_ESTADO_PROCESO!=0))
                 AND ((P_ID_ESTADO_PROCESO=3 AND F.AREA_ATENDIO LIKE DECODE(p_proceso_estado_area,'%%',F.AREA_ATENDIO,p_proceso_estado_area))OR (P_ID_ESTADO_PROCESO!=3))
                 AND ((A.PROCESO_ESTADO_AREA=p_proceso_estado_area AND ACCION=P_ID_ESTADO_PROCESO) OR (p_proceso_estado_area='NOMINAS') OR (ACCION!=3 AND A.PROCESO_ESTADO_AREA=p_proceso_estado_area) OR P_ID_ESTADO_PROCESO=0   OR P_ID_ESTADO_PROCESO=2)
-            ORDER BY FECHA_REGISTRO DESC; 
+            ORDER BY FECHA_REGISTRO DESC); 
     end if;
       
     END PROC_GET_GEST_DEPENDENCIA_AREA;
@@ -1448,9 +1537,11 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             contador:=1;
             end;
             if (contador=0) then 
-        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION )
-               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, p_proceso_estado_area, p_id_gestion_dependencia,1);
-            end if;
+           INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION,TIPO_GESTION )
+               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, p_proceso_estado_area, p_id_gestion_dependencia,
+               p_estadop, -- ESTADO ACTUAL,ACCION
+               1-- ESTA EN FASE DE CREACION
+               );  end if;
    --    EXCEPTION
   --      WHEN OTHERS THEN
     --       p_id_salida := p_id_gestion_dependencia;    
@@ -1881,6 +1972,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
         PRMFECHA_CREACION rh_dependencia.fecha_creacion_dependencia%TYPE := p_fecha_creacion_dependencia;
         INTENTOINGRESAPLAZA BOOLEAN := TRUE;
         voSave NUMBER;
+        p_existe_direccion NUMBER;
     BEGIN
         IF  p_id_area = 2 THEN
             p_id_camara := 0;
@@ -1888,7 +1980,14 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             p_id_camara := 99;
         END IF;
         
-        SELECT MAX(ID_DIRECCION)+1 INTO p_id_direccion FROM SIDEP.RH_DIRECCION_DEPENDENCIA;
+        select count(1) into p_existe_direccion from SIDEP.RH_DIRECCION_DEPENDENCIA;
+        if p_existe_direccion>0
+        then
+        SELECT MAX(ID_DIRECCION)+1 INTO p_id_direccion 
+        FROM SIDEP.RH_DIRECCION_DEPENDENCIA;
+        else
+         p_id_direccion:=1;
+        end if;
         
         BEGIN
             PKG_INSERTS.PROC_INS_RH_DIRECCION_DEPENDEN (
@@ -2202,15 +2301,16 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
         p_fecha_publicacion                 RH_DEPENDENCIA.FECHA_PUBLICACION%type;
         p_obs_fecha_vigencia                RH_DEPENDENCIA.OBS_FECHA_VIGENCIA%type;
         p_proceso_estado_area               TT_GEST_DEPENDENCIA.PROCESO_ESTADO_AREA%type;
+        p_id_tipo_gestion                   TT_GEST_DEPENDENCIA.ID_TIPO_GESTION%type;
     BEGIN
         SELECT 
             CODIGO_DEPENDENCIA, CODIGO_PRESUPUESTARIO, NOMBRE_DEPENDENCIA, NOMBRE_GAFETE, NOMBRE_ABREVIADO,
             NOMBRE_DOCUMENTO, CONECTOR, FECHA_DEL_ACUERDO, FECHA_ENTRA_VIGENCIA, REFERENCIA,
-            FUNCION_UNIDAD, DEPARTAMENTO, MUNICIPIO, TIPO_AREA, ACUERDO_DIGITAL, FECHA_PUBLICACION, OBS_FECHA_VIGENCIA,PROCESO_ESTADO_AREA
+            FUNCION_UNIDAD, DEPARTAMENTO, MUNICIPIO, TIPO_AREA, ACUERDO_DIGITAL, FECHA_PUBLICACION, OBS_FECHA_VIGENCIA,PROCESO_ESTADO_AREA,ID_TIPO_GESTION
         INTO
             p_codigo_dependencia, p_codigo_presupuestario, p_nombre_dependencia, p_nombre_gafete, p_nombre_abreviado,
             p_nombre_documento, p_conector, p_fecha_del_acuerdo, p_fecha_entra_vigencia, p_referencia, 
-            p_funcion_unidad, p_departamento, p_municipio, p_tipo_area, p_acuerdo_digital, p_fecha_publicacion, p_obs_fecha_vigencia,p_proceso_estado_area
+            p_funcion_unidad, p_departamento, p_municipio, p_tipo_area, p_acuerdo_digital, p_fecha_publicacion, p_obs_fecha_vigencia,p_proceso_estado_area,p_id_tipo_gestion
         FROM TT_GEST_DEPENDENCIA
         WHERE 
             ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
@@ -2246,8 +2346,8 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
         WHERE ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
         
       --    begin
-        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION )
-               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, p_proceso_estado_area, p_id_gestion_dependencia, 2);
+        INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION,TIPO_GESTION )
+               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, p_proceso_estado_area, p_id_gestion_dependencia, 2,p_id_tipo_gestion);
     --   EXCEPTION
     --    WHEN OTHERS THEN
         --   p_id_salida := p_codigo_dependencia;    
@@ -2283,6 +2383,9 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
         declare 
 area varchar(30):='';
 contador number:=0;
+area_regresa varchar(30):='';
+TIPO_GESTION NUMBER;
+
 begin 
    if((UPPER(p_proceso_estado_area)='PRESIDENCIA') or (UPPER(p_proceso_estado_area)='SECRETARIA'))
    then
@@ -2292,8 +2395,32 @@ begin
     then
      area:='NOMINAS';
    end if;
-   
-   
+      
+      BEGIN
+        select T.ID_TIPO_GESTION,A.AREA_ATENDIO INTO TIPO_GESTION,area_regresa 
+        from TT_GEST_DEPENDENCIA T, SIDEP.DEPENDENCIAS_AREA_ATENDIDA A 
+        WHERE
+        T.ID_GESTION_DEPENDENCIA=A.ID_GESTION_DEPENDENCIA
+        AND T.ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
+        EXCEPTION WHEN OTHERS THEN
+            TIPO_GESTION:=-1;
+            
+      END;
+      
+        IF TIPO_GESTION=2 or TIPO_GESTION=3
+        THEN 
+          UPDATE TT_GEST_DEPENDENCIA
+        SET
+            ID_ESTADO_PROCESO = PKG_CONSTANTES.RECHAZADA,
+            OBSERVACIONES = p_observaciones,
+            IP = P_IP,
+            ID_USUARIO_REGISTRO = p_id_usuario_registro,
+            FECHA_REGISTRO = SYSDATE,
+            PROCESO_ESTADO_AREA= area_regresa
+        WHERE
+            ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
+        else 
+       
         UPDATE TT_GEST_DEPENDENCIA
         SET
             ID_ESTADO_PROCESO = PKG_CONSTANTES.RECHAZADA,
@@ -2304,14 +2431,14 @@ begin
             PROCESO_ESTADO_AREA= p_proceso_estado_area
         WHERE
             ID_GESTION_DEPENDENCIA = p_id_gestion_dependencia;
-      
+      end if;
       
   begin 
             select count(1) into contador from SIDEP.DEPENDENCIAS_AREA_ATENDIDA 
             where  ID_USUARIO_ATENDIO =  p_id_usuario_registro
-            and AREA_ATENDIO= p_proceso_estado_area
+            and AREA_ATENDIO= area
             and ID_GESTION_DEPENDENCIA= p_id_gestion_dependencia
-            and ACCION =1;
+            and ACCION =3;
             EXCEPTION WHEN OTHERS THEN
             contador:=1;
             end;
@@ -2606,13 +2733,15 @@ begin
         p_fecha_entra_vigencia          tt_gest_dependencia.fecha_entra_vigencia%type;
         p_fecha_publicacion             tt_gest_dependencia.fecha_publicacion%type;
         p_obs_fecha_vigencia            tt_gest_dependencia.obs_fecha_vigencia%type;
+        p_id_tipo_gestion               tt_gest_dependencia.id_tipo_gestion%type;
+        CONTADOR number:=0;
     BEGIN
         SELECT 
             CODIGO_DEPENDENCIA,CONECTOR,FECHA_DEL_ACUERDO,FECHA_ENTRA_VIGENCIA,
-            REFERENCIA,FUNCION_UNIDAD,TIPO_AREA,ACUERDO_DIGITAL, FECHA_PUBLICACION, OBS_FECHA_VIGENCIA
+            REFERENCIA,FUNCION_UNIDAD,TIPO_AREA,ACUERDO_DIGITAL, FECHA_PUBLICACION, OBS_FECHA_VIGENCIA,ID_TIPO_GESTION
         INTO
             p_codigo_dependencia, p_conector_dependencia,p_fecha_creacion_dependencia,p_fecha_entra_vigencia,
-            p_referencia, p_funcion_unidad,  p_id_area, p_acuerdo_digital, p_fecha_publicacion, p_obs_fecha_vigencia
+            p_referencia, p_funcion_unidad,  p_id_area, p_acuerdo_digital, p_fecha_publicacion, p_obs_fecha_vigencia,p_id_tipo_gestion
         FROM TT_GEST_DEPENDENCIA
         WHERE 
             ID_GESTION_DEPENDENCIA = p_id_gest_dependencia;
@@ -2633,6 +2762,25 @@ begin
             IP = p_ip
         WHERE
             ID_GESTION_DEPENDENCIA = p_id_gest_dependencia;
+            
+            
+             begin 
+            select count(1) into contador from SIDEP.DEPENDENCIAS_AREA_ATENDIDA 
+            where  ID_USUARIO_ATENDIO =  p_id_usuario_registro
+            and AREA_ATENDIO= 'NOMINAS'
+            and ID_GESTION_DEPENDENCIA= p_id_gest_dependencia
+            and ACCION =PKG_CONSTANTES.ATENDIDA;
+            EXCEPTION WHEN OTHERS THEN
+            contador:=1;
+            end;
+            if (contador=0) then 
+           INSERT INTO SIDEP.DEPENDENCIAS_AREA_ATENDIDA(ID_GESTION,ID_USUARIO_ATENDIO, AREA_ATENDIO,ID_GESTION_DEPENDENCIA,ACCION,TIPO_GESTION )
+               values( SIDEP.SQ_DEP_ATENDIDAS.nextval, p_id_usuario_registro, 'NOMINAS', p_id_gest_dependencia,
+               PKG_CONSTANTES.ATENDIDA, -- ESTADO ACTUAL,ACCION
+               p_id_tipo_gestion-- ESTA EN FASE DE ACTUALIZACION NOMINAL
+               );  
+        end if;
+               
         p_id_salida := p_id_gest_dependencia;
         p_msj := 'ok';
     EXCEPTION

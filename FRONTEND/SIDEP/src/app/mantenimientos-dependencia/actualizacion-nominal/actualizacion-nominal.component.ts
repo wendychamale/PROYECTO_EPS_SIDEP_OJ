@@ -82,6 +82,8 @@ export class ActualizacionNominalComponent implements OnInit {
   fechaAnulacion;
   inicioVigRef;
   chkRefVigencia;
+areaActual;
+
 //Variables para verificar que usuario esta logueado
 viewSecrePresi=false;
 viewSecretaria=false;
@@ -91,6 +93,7 @@ viewUcpas = false;
 viewCidej=false;
 viewCit=false;
 viewAdmin=false;
+
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
     private router: Router,private route:ActivatedRoute
@@ -150,21 +153,31 @@ viewAdmin=false;
   valProfile() {
     // esto despues hay que quitarlo 
 
-this.viewSecretaria=true;
+this.viewSecretaria=false;
 this.viewPresidencia=false;
-this.viewUcpas = false;
+this.viewUcpas = true;
 this.viewNominas = false;
 this.viewCidej=false;
 this.viewCit=false;
 this.viewSecrePresi=false;
 this.viewAdmin=false;
 
-if(this.viewSecretaria|| this.viewPresidencia){
+if (this.viewPresidencia){
   this.viewSecrePresi=true;
-}
-if(this.viewAdmin){
+  this.areaActual="PRESIDENCIA"
+ }else if (this.viewSecretaria){
   this.viewSecrePresi=true;
-  this.viewUcpas = true;
+  this.areaActual="SECRETARIA"
+ }else if (this.viewUcpas){
+ this.areaActual="UCPAS"
+ }else if (this.viewNominas){
+  this.viewSecrePresi=false;
+  this.viewUcpas = false;
+  this.areaActual="NOMINAS"
+ }else if (this.viewAdmin){
+this.viewSecrePresi=true;
+this.viewUcpas = true;
+this.areaActual="UCPAS"
 }
 
 if(this.viewCidej || this.viewCit||this.viewNominas){
@@ -262,6 +275,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
      FECHA_DEL_ACUERDO:this.datePipe.transform(this.updateNominal.value.fechaAcuerdo, 'dd/MM/yyyy'),
      FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.updateNominal.value.inicioVigencia, 'dd/MM/yyyy'),
      FECHA_PUBLICACION:this.datePipe.transform(this.updateNominal.value.fechaPublicacion, 'dd/MM/yyyy'),
+     PROCESO_ESTADO_AREA: this.areaActual,
      OBS_FECHA_VIGENCIA:this.updateNominal.value.inicioVigRef.toUpperCase(),
      REFERENCIA:this.updateNominal.value.referencia.toUpperCase(),
      FUNCION_UNIDAD:this.updateNominal.value.selFuncionalidad,
@@ -295,8 +309,10 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
 
 
   updateNominalDependencia(dependencia){
+    console.log("actualizamos la nominal");
     this.mantenimientoDependenciaService.updateDependenciaNominal(dependencia).subscribe(
       data=>{
+        console.log(data.result);
         if(data.result=='OK'){
          swal("Dependencia Nominal Actualizada", data.msj, "success")
          this.router.navigate(['/mantenimientos/dependencias']);

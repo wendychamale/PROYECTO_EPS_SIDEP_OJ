@@ -75,9 +75,9 @@ viewAdmin=false;
   valProfile() {
     // esto despues hay que quitarlo 
 
-this.viewSecretaria=false;
+this.viewSecretaria=true;
 this.viewPresidencia=false;
-this.viewUcpas = true;
+this.viewUcpas = false;
 this.viewNominas = false;
 this.viewCidej=false;
 this.viewCit=false;
@@ -96,6 +96,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   this.viewSecrePresi=false;
   this.viewUcpas = false;
 }
+
   /*  for (var i = 0; i < this.session.PERFILES.length; i++) {
       if (this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL) {
         this.viewNominas = true;
@@ -163,6 +164,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   }
 
   validaPreviaBaja(idDependencia){
+    console.log("bajas");
     this.mantenimientoDependenciaService.getValidaPlazasDep(idDependencia).subscribe(
       data=>{
         if(data.result=='ok'){
@@ -179,6 +181,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   }
 
   regularizar(idDependencia) {
+    
     this.router.navigate(['/mantenimientos/regularizar/' + idDependencia]);
   }
 

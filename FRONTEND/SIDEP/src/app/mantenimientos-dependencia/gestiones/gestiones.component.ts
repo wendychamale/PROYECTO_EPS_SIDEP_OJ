@@ -109,10 +109,10 @@ export class GestionesComponent implements OnInit {
   valProfile(){
 // esto despues hay que quitarlo 
 
-this.viewSecretaria=false;
+this.viewSecretaria=true;
 this.viewPresidencia=false;
 this.viewUcpas = false;
-this.viewNominas = true;
+this.viewNominas = false;
 this.viewCidej=false;
 this.viewCit=false;
 this.viewSecrePresi=false;
@@ -332,7 +332,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   }
 
   rechazar(item):void{
-    
+    console.log("vamos a rechazar definitivamente")
     console.log(item);
     const dialogRef = this.dialog.open(RechazarComponent, {
       width: '650px',
@@ -486,18 +486,35 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
         };
      
           //Agregar validaciones para confirmaciones
-
+         console.log("confirmar gestion"+item.ID_GESTION_DEPENDENCIA)
           if(item.ID_TIPO_GESTION==1){
+            console.log("confirma creacion");
               this.confirmarCreacion(gestion) 
           }
           else if(item.ID_TIPO_GESTION==2){
+            console.log("confirma actualizacion");
             this.confirmarActualizacion(gestion);
          }
           else if(item.ID_TIPO_GESTION==4){
+            console.log("confirma baja");
             this.confirmarBaja(gestion);
          }
           else if(item.ID_TIPO_GESTION==3){
-          this.confirmarRegularizacion(gestion);
+            console.log("confirma regulariza");
+              console.log("damos de baja"+item.CODIGO_PRESUPUESTARIO);  
+          this.mantenimientoDependenciaService.getBajaregula(item.CODIGO_PRESUPUESTARIO).subscribe(
+            data=>{
+           
+              if(data.result=='OK' ||data.result=='ok' ){
+                console.log("ya dimos de baja ahora regulariza");
+                console.log(data);
+               this.confirmarRegularizacion(gestion);
+               }else{
+                swal("Error", data.msj, "error")
+              } 
+            })
+           
+         
          }
 
     }

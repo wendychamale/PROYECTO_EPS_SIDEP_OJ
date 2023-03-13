@@ -75,6 +75,18 @@ export class RegularizarComponent implements OnInit {
   inicioVigRef;
   chkRefVigencia;
 
+  areaActual;
+
+//Variables para verificar que usuario esta logueado
+viewSecrePresi=false;
+viewSecretaria=false;
+viewPresidencia=false;
+viewNominas = false;
+viewUcpas = false;
+viewCidej=false;
+viewCit=false;
+viewAdmin=false;
+
   constructor(private mantenimientoDependenciaService: MantenimientosDependenciaService, public authService: AuthService,
     public HttpClient: HttpClient,private fb: FormBuilder,  private _location: Location, private datePipe : DatePipe,
     private router: Router,private route:ActivatedRoute
@@ -109,7 +121,7 @@ export class RegularizarComponent implements OnInit {
       inicioVigRef: [''],
       chkRefVigencia:['']            
     });
-
+    this.valProfile();
     this.loadDependencia();
 
     this.mantenimientoDependenciaService.getListaDepartamento().subscribe(
@@ -122,6 +134,49 @@ export class RegularizarComponent implements OnInit {
         this.listArea = data;
       });
 
+  }
+
+  valProfile() {
+    // esto despues hay que quitarlo 
+
+this.viewSecretaria=true;
+this.viewPresidencia=false;
+this.viewUcpas = true;
+this.viewNominas = false;
+this.viewCidej=false;
+this.viewCit=false;
+this.viewSecrePresi=false;
+this.viewAdmin=false;
+
+if (this.viewPresidencia){
+  this.viewSecrePresi=true;
+  this.areaActual="PRESIDENCIA"
+ }else if (this.viewSecretaria){
+  this.viewSecrePresi=true;
+  this.areaActual="SECRETARIA"
+ }else if (this.viewUcpas){
+ this.areaActual="UCPAS"
+ }else if (this.viewNominas){
+  this.viewSecrePresi=false;
+  this.viewUcpas = false;
+  this.areaActual="NOMINAS"
+ }else if (this.viewAdmin){
+this.viewSecrePresi=true;
+this.viewUcpas = true;
+this.areaActual="UCPAS"
+}
+
+if(this.viewCidej || this.viewCit||this.viewNominas){
+  this.viewSecrePresi=false;
+  this.viewUcpas = false;
+}
+  /*  for (var i = 0; i < this.session.PERFILES.length; i++) {
+      if (this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL) {
+        this.viewNominas = true;
+      } else if (this.constantes.UCPAS == this.session.PERFILES[i].ID_PERFIL) {
+        this.viewUcpas = true;
+      }
+    }*/
   }
 
   listFuncionalidad: Funcionalidad[] = [
@@ -199,6 +254,7 @@ regularizarDependencia(){
    FECHA_DEL_ACUERDO:this.datePipe.transform(this.regularizar.value.fechaAcuerdo, 'dd/MM/yyyy'),
    FECHA_ENTRA_VIGENCIA:this.datePipe.transform(this.regularizar.value.inicioVigencia, 'dd/MM/yyyy'),
    FECHA_PUBLICACION:this.datePipe.transform(this.regularizar.value.fechaPublicacion, 'dd/MM/yyyy'),
+   PROCESO_ESTADO_AREA:  this.areaActual,
    OBS_FECHA_VIGENCIA:this.regularizar.value.inicioVigRef.toUpperCase(),
    FECHA_ANULACION:"",
    REFERENCIA:this.regularizar.value.referencia.toUpperCase(),
@@ -235,6 +291,8 @@ regularizarDependencia(){
 
 
 regularDependencia(dependencia){
+
+console.log("vamos a regularizar");
   this.mantenimientoDependenciaService.regulaDependencia(dependencia).subscribe(
     data=>{
       if(data.result=='OK'){

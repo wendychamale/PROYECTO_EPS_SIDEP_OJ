@@ -153,6 +153,7 @@ bajaDependencia(){
 }
 
 serviceBajaDependencia(dependencia){
+  console.log("daremos de baja");
 
   this.mantenimientoDependenciaService.bajaDependencia(dependencia).subscribe(
     data=>{

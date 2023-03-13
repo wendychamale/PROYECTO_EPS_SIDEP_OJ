@@ -207,8 +207,8 @@ export class CreacionComponent implements OnInit {
     // esto despues hay que quitarlo 
     this.viewSecretaria=false;
     this.viewPresidencia=false;
-    this.viewUcpas = true;
-    this.viewNominas = false;
+    this.viewUcpas = false;
+    this.viewNominas = true;
     this.viewCidej=false;
     this.viewCit=false;
     this.viewAdmin =false;
@@ -561,7 +561,7 @@ asignararea(){
 }
 //implementamos nuevos metodos para seguir con la creacion de una dependencia
 CrearDependencia1(){
-console.log("Crear dependencia continuacion.....");
+console.log("Crear dependencia continuacion....."+this.areaactual+"-"+this.session.ID_USUARIO+"-"+this.idGestion);
 this.asignararea();
   let dependencia={
   

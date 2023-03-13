@@ -6,9 +6,19 @@ import gt.gob.oj.SIDEP.model.TtDependencia;
 import gt.gob.oj.utils.Config;
 import gt.gob.oj.utils.ConnectionsPool;
 import gt.gob.oj.utils.jsonResult;
+import oracle.jdbc.OracleTypes;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class RegulaDependenciaManager {
   CreaDependenciaManager creaSolicitud = new CreaDependenciaManager();
@@ -115,4 +125,24 @@ public class RegulaDependenciaManager {
     } 
     return salida;
   }
+  
+  
+  public jsonResult getbajaRegulaNominal(int CODIGO_PRESUPUESTARIO) throws Exception {
+	  jsonResult salida = new jsonResult();
+	    ConnectionsPool c = new ConnectionsPool();
+	    Connection conn = c.conectar();
+	    System.out.print("estamos en nuevo metodo "+ this.SCHEMA );
+	    CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_DEPENDENCIA.PROC_GET_NOMINAL_BAJA(?,?,?)");
+	    call.setInt("p_codigo_presupuestario", CODIGO_PRESUPUESTARIO);
+	    call.registerOutParameter("p_id_salida", OracleTypes.NUMBER);
+	    call.registerOutParameter("p_msj", OracleTypes.VARCHAR);
+	    call.execute();
+	    salida.id = call.getInt("p_id_salida");
+	    salida.msj = call.getString("p_msj");
+	    if (salida.id >= 0)
+	      salida.result = "ok"; 
+	    call.close();
+	    conn.close();
+	    return salida;
+	  }
 }

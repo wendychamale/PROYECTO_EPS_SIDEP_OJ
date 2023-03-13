@@ -139,6 +139,14 @@ export class MantenimientosDependenciaService {
       );
   }
 
+    
+  getBajaregula(codPresupuestario): Observable<any> {
+    console.log("buscamos a que dependencia dar de baja");
+    return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'RegulaDependencia/getbajaRegulaNominal/' + codPresupuestario )
+      .pipe(
+        catchError(this.handleError('regulaDependencia', []))
+      );
+  }
   bajaDependencia(dependencia): Observable<any> {
     return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'BajaDependencia/insSolitudBajaDependencia', dependencia)
       .pipe(
@@ -256,6 +264,7 @@ export class MantenimientosDependenciaService {
   }
 
   getReferenciaDepRegularizar(codPres): Observable<any> {
+    console.log(this.appSettings.restApiServiceBaseUri + 'Dependencia/'+ codPres +'/getNombreDependencia');
     return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'Dependencia/'+ codPres +'/getNombreDependencia')
       .pipe(
         catchError(this.handleError('getReferenciaDepRegularizar', []))
