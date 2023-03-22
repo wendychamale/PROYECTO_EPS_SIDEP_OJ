@@ -51,6 +51,7 @@ public class DepenDespachoManager {
   
   public jsonResult insDependenciaDespacho(TtDepenDespacho ttDepenDespacho, Connection conn) throws Exception {
     jsonResult salida = new jsonResult();
+    System.out.println("codigo_despacho"+ ttDepenDespacho.ID_DESPACHO);
     CallableStatement call = conn.prepareCall("call " + this.SCHEMA + ".PKG_DEPENDENCIA.PROC_INS_TT_DEP_RH_CIDEJ (?,?,?,?,?,?,?)");
     call.setString("p_id_depen_RH_CIDEJ", ttDepenDespacho.ID_DEP_RH_CIDEJ);
     call.setString("p_dependencia", ttDepenDespacho.DEPENDENCIA);

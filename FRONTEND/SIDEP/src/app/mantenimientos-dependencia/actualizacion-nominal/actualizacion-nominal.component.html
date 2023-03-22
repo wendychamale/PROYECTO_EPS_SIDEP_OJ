@@ -98,7 +98,7 @@
                 <div class="row row-cols-3">
                   <div class="col">
                     <mat-form-field>
-                      <mat-select placeholder="*CONECTOR" formControlName="selConector"  [disabled]="!this.viewUcpas">
+                      <mat-select placeholder="*CONECTOR" formControlName="selConector"  >
                         <mat-option *ngFor="let conector of listConector" [value]="conector.value" style="font-size: 12px;">{{conector.viewValue}}</mat-option>
                       </mat-select>
                       <mat-error *ngIf="this.updateNominal.controls.selConector.errors?.required">
@@ -108,7 +108,7 @@
                   </div>
                   <div class="col">
                     <mat-form-field>
-                      <mat-select placeholder="*FUNCIONALIDAD" [disabled]="!this.viewUcpas" formControlName="selFuncionalidad">
+                      <mat-select placeholder="*FUNCIONALIDAD"  formControlName="selFuncionalidad">
                         <mat-option *ngFor="let funcionalidad of listFuncionalidad" [value]="funcionalidad.value" style="font-size: 12px;">{{funcionalidad.viewValue}}</mat-option>
                       </mat-select>
                       <mat-error *ngIf="this.updateNominal.controls.selFuncionalidad.errors?.required">
@@ -118,7 +118,7 @@
                   </div>
                   <div class="col">
                     <mat-form-field>
-                      <mat-select placeholder="*AREA" formControlName="selArea" [disabled]="!this.viewUcpas">
+                      <mat-select placeholder="*AREA" formControlName="selArea" >
                         <mat-option *ngFor="let area of listArea" [value]="area.ID_AREA" style="font-size: 12px;">{{area.NOMBRE_AREA}}</mat-option>
                       </mat-select>
                       <mat-error *ngIf="this.updateNominal.controls.selArea.errors?.required">
@@ -168,7 +168,7 @@
     
                           <mat-form-field *ngIf="!checked" color="warn" [floatLabel]="floatLabelControl.value" style="font-size: 12px;">
                             <input matInput (click)="picker2.open()" formControlName="inicioVigencia" (ngModelChange)="parseDate($event)" [matDatepicker]="picker2"
-                              placeholder="INICIO VIGENCIA" [disabled]="!this.viewUcpas"  [readonly]="!this.viewUcpas">
+                              placeholder="INICIO VIGENCIA" >
                             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                             <mat-datepicker touchUi #picker2></mat-datepicker>
                             <mat-error *ngIf="this.updateNominal.controls.inicioVigencia.errors?.required">
@@ -180,7 +180,7 @@
                           </mat-form-field>
     
                           <mat-form-field *ngIf="checked" color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                            <input matInput formControlName="inicioVigRef" class="textos" type="text" maxlength="1024" placeholder="Ingrese Referencia" [readonly]="!this.viewUcpas" >
+                            <input matInput formControlName="inicioVigRef" class="textos" type="text" maxlength="1024" placeholder="Ingrese Referencia" >
                             <mat-error *ngIf="this.updateNominal.controls.inicioVigRef.errors?.required">
                               REFERENCIA FECHA INICIO VIGENCIA REQUERIDO
                             </mat-error>
@@ -216,7 +216,7 @@
                   </div>
                     <div class="form-group">
                 <mat-form-field color="warn" [floatLabel]="floatLabelControl.value" class="textos">
-                  <textarea matInput formControlName="referencia" color="warn" class="form-control" placeholder="*REFERENCIA" rows="2" [readonly]="!this.viewUcpas"></textarea>
+                  <textarea matInput formControlName="referencia" color="warn" class="form-control" placeholder="*REFERENCIA" rows="2"></textarea>
                   <mat-error *ngIf="this.updateNominal.controls.referencia.errors?.required">
                     REFERENCIA REQUERIDO
                   </mat-error>
@@ -282,7 +282,7 @@
                         <td></td>
                         <td>
                           <i *ngIf="progress==100" class="fa fa-book"></i>
-                          <button *ngIf="this.viewSecrePresi" type="button" class="btn btn-danger btn-s" (click)="files.length=0" [disabled]="!files.length && this.viewSecrePresi" >
+                          <button type="button" class="btn btn-danger btn-s" (click)="files.length=0" [disabled]="!files.length" >
                             <span class="fa fa-trash"></span>
                           </button>
                           <button *ngIf="archivoPrevio" type="button" class="btn btn-primary btn-s" (click)="viewPdf(item.name)">

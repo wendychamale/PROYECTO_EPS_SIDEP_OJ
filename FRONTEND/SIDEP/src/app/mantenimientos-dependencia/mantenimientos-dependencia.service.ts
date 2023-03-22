@@ -243,6 +243,7 @@ export class MantenimientosDependenciaService {
   }
 
   codDespachoDependencia(codDespachoDep): Observable<any> {
+    console.log("antes de irse"+codDespachoDep.ID_DESPACHO);
     return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'DependeciaDespacho/insDependenciaDespacho', codDespachoDep)
       .pipe(
         catchError(this.handleError('codDespachoDependencia', []))

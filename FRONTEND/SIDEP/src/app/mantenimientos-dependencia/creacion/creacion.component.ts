@@ -207,8 +207,8 @@ export class CreacionComponent implements OnInit {
     // esto despues hay que quitarlo 
     this.viewSecretaria=false;
     this.viewPresidencia=false;
-    this.viewUcpas = false;
-    this.viewNominas = true;
+    this.viewUcpas = true;
+    this.viewNominas = false;
     this.viewCidej=false;
     this.viewCit=false;
     this.viewAdmin =false;

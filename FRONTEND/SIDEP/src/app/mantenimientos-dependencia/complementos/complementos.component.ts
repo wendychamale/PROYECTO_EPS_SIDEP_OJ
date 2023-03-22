@@ -78,10 +78,10 @@ this.viewSecretaria=false;
 this.viewPresidencia=false;
 this.viewUcpas = false;
 this.viewNominas = false;
-this.viewCidej=false;
+this.viewCidej=true;
 this.viewCit=false;
 this.viewSecrePresi=false;
-this.viewAdmin=true;
+this.viewAdmin=false;
 
 if(this.viewSecretaria|| this.viewPresidencia){
   this.viewSecrePresi=true;
@@ -109,6 +109,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
       data => {
         if(data.length>0){
         this.dependencias = data;
+        console.log( this.dependencias );
       }else{ 
           swal("Dependencias Nominales", "No se han encontrado dependencias", "info")
         }
@@ -118,6 +119,8 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
+
+
   }
 
 
@@ -197,7 +200,18 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
          IP : "",
          ID_USUARIO_REGISTRO : this.session.ID_USUARIO
     };
- 
+    console.log ("despacho"+codDespacho.ID_DESPACHO);
+
+    var tam=5;
+    // console.log("el valor"+valor)
+     tam -= codDespacho.ID_DESPACHO.toString().length;
+     //console.log("el tam"+tam)
+   if ( tam > 0 )
+   {
+    codDespacho.ID_DESPACHO=new Array( tam + (/\./.test( codDespacho.ID_DESPACHO ) ? 2 : 1) ).join( '0' ) + codDespacho.ID_DESPACHO;
+     console.log("el  valor"+ codDespacho.ID_DESPACHO)
+   }
+
      this.mantenimientoDependenciaService.codDespachoDependencia(codDespacho).subscribe(
        data => {
          if(data.result=='OK'){
