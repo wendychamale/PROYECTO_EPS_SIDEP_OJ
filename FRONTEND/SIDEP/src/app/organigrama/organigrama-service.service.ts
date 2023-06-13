@@ -23,6 +23,20 @@ export class OrganigramaServiceService {
         catchError(this.handleError('getOrganigrama', []))
       );
   }
+  DeleteNodos(codigo_area): Observable<any> {
+    //console.log("entramos a "+this.appSettings.restApiServiceBaseUri + 'Organigrama/getPadreOrganigrama');
+    return this.http.get<any>(this.appSettings.restApiServiceBaseUri + 'Organigrama/deleteHijos/'+codigo_area)
+      .pipe(
+        catchError(this.handleError('getOrganigrama', []))
+      );
+  }
+  AddNodos(data): Observable<any> {
+    console.log("entramos a "+this.appSettings.restApiServiceBaseUri  + 'Organigrama/addChild');
+    return this.http.post<any>(this.appSettings.restApiServiceBaseUri + 'Organigrama/addChild', data)
+      .pipe(
+        catchError(this.handleError('addChild', []))
+      );
+  }
 
   constructor(private http: HttpClient, private appSettings: AppconfigService) { }
   private handleError<T>(operation = 'operation', result?: T) {

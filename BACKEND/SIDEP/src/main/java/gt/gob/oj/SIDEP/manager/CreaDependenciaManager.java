@@ -34,14 +34,17 @@ public class CreaDependenciaManager {
     Connection conn = c.conectar();
     conn.setAutoCommit(false);
     try {
-     //Resultado de subida ttDependencia.RUTA = this.archivo.getRutaArchivo(ttDependencia);
+     //Resultado de subida 
+      ttDependencia.RUTA = this.archivo.getRutaArchivo(ttDependencia);
+      System.out.print( "la ruta del archivo es "+ttDependencia.RUTA);
       ttDependencia.ID_TIPO_GESTION = (new Config()).getParamCrear();
       salida = insDependencia(ttDependencia, conn);
       if (salida.id > 0) {
         ttDependencia.ID_SOLICITUD = (new StringBuilder(String.valueOf(salida.id))).toString();
-      //  boolean cargaArchivo = this.archivo.guardarArchivo(ttDependencia).booleanValue();
+         boolean cargaArchivo = this.archivo.guardarArchivo(ttDependencia).booleanValue();
+         System.out.print( "archivo subido "+cargaArchivo);
         //esto hay que regresarlo para validar el archivo
-        boolean cargaArchivo=true;
+        //boolean cargaArchivo=true;
         if (cargaArchivo) {
           salida.result = "OK";
           conn.commit();

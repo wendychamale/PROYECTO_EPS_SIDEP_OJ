@@ -15,7 +15,7 @@
   	<version>1.0.0.0</version>
  </db>
  <archivo>
-	<ruta>G:/</ruta>
+	<ruta>C:/</ruta>
 	<tipo>Windows</tipo>
 	<carpeta>SIDEP/</carpeta>
 </archivo>
@@ -54,7 +54,7 @@
     </db> 
     
  <archivo> 
-	<ruta>D:/</ruta> 
+	<ruta>C:/</ruta> 
 	<tipo>Windows</tipo> 
 	<carpeta>AGT_FILES/SIDEP/</carpeta> 
 </archivo> 

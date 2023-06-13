@@ -7,9 +7,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../app.module';
 import { SelectModule } from 'ng2-select';
 import {MatTreeModule } from '@angular/material/tree';
+import { AddDependenciaComponent } from './add-dependencia/add-dependencia.component';
 
 @NgModule({
-  declarations: [ JerarquiaComponent],
+  declarations: [ JerarquiaComponent, AddDependenciaComponent],
   imports: [
     CommonModule,
     OrganigramaRoutingModule,
@@ -19,5 +20,7 @@ import {MatTreeModule } from '@angular/material/tree';
     ReactiveFormsModule,
     MatTreeModule
   ],
+  entryComponents:[
+    AddDependenciaComponent]
 })
 export class OrganigramaModule { }
