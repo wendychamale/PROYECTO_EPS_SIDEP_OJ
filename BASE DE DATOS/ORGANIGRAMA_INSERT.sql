@@ -132,20 +132,6 @@
   insert into RH_AREA_DEPARTAMENTO (CODIGO_AREA,NOMBRE_AREA,DESCRIPCION_AREA,AREA_PADRE)
   values (SQ_RH_AREA_DEPARTAMENTO.nextval,'Unidad Especial de Ejecucion de Control de Prestamos Para la Ejecucion del Programa UEEA','Presidencia del Organismo Judicial',5);
   
-  
-  
-  -- HIJOS DE Consejo de la carrera Judicional 6
-  -- NO TIENE
-  
-  --HIJOS DE CAMARA PENAL 7
-  -- NO TIENE
-  
-    --HIJOS DE Camara Civil 8
-  -- NO TIENE
-  
-  --HIJOS DE Camara de Amparos y Antejuicios 9
-  --NO TIENE
-  
    --HIJOS DE Salas Penales 10
   insert into RH_AREA_DEPARTAMENTO (CODIGO_AREA,NOMBRE_AREA,DESCRIPCION_AREA,AREA_PADRE)
   values (SQ_RH_AREA_DEPARTAMENTO.nextval,'Juzgados de Primera Instancia de Juridiccion Penal','Salas Penales',10);
@@ -278,31 +264,7 @@
  insert into RH_AREA_DEPARTAMENTO (CODIGO_AREA,NOMBRE_AREA,DESCRIPCION_AREA,AREA_PADRE)
   values (SQ_RH_AREA_DEPARTAMENTO.nextval,'Coordinaciones Regionales','Gerencia General',37);
   
- --hijos de Unidad de control 38
--- no tiene
 
- --hijos de Unidad de Antecedentes Penales 39
--- no tiene
-
- --hijos de Unidad de Informacion Publica 40
--- no tiene
-
- --hijos de Unidad Especial de Ejecucion de Control de Prestamos Para la Ejecucion del Programa UEEA 41
--- no tiene
---hijos de Juzgados de Primera Instancia de Juridiccion Penal 42 
--- no tiene
-
---hijos de Juzgado de primera Instancia Penal Interoactividad y Delitos 43
--- no tiene
-
---hijos de Juzgado de Primera Instancia Mayor 44
--- no tiene
-
---hijos Juzgado de Primera Instancia Extencion de Dominio 45
--- no tiene
-
---hijos de Instancia de Sentencia Penal de Narcoactividad 46
--- no tiene
 
 --hijos Asociado de Primera Instancia Civil 47
  insert into RH_AREA_DEPARTAMENTO (CODIGO_AREA,NOMBRE_AREA,DESCRIPCION_AREA,AREA_PADRE)
@@ -314,60 +276,3 @@
   values (SQ_RH_AREA_DEPARTAMENTO.nextval,'Juzgado de Paz Mixto','Tribunales de Sentencia Penal, Narcoactividad y Delitos contra el Ambiente',48);
  
  
---hijos de Juzgado de Primera Instancia de Familia 49
--- no tiene
-
- --hijos de Juzgado de Primera Instancia de Trabajo y Prevencion Social 50
--- no tiene
- 
-  --hijos de Juzgado de Primera Instancia de la Ninez y Adolesencia 51
--- no tiene
-
-  --hijos de Tribunal de Segunda Instancia de Cuentas 52
--- no tiene
-
-  --hijos de Tribunal de Segunda Instancia de Lo Economico Coactivo 53
--- no tiene
- 
---hijos de Unidad Ejecutora del Sistema de Integridad Institucional 54
--- no tiene
-
---hijos de Almacen Judicial 55
--- no tiene
-
---hijos Archivo General de Tribunales 56
--- no tiene
-
-
---hijos Centro de Servicios Auxiliares 57
--- no tiene
-
---hijos Centro de Servicios Auxiliares de la Administracion de Justicia 58
--- no tiene
-
---hijos Centro de Servicios Auxiliares de la Administracion de Justicia Familiar 59
--- no tiene
-
---hijos de Centro de Informatica y Telecomunicaciones 60
--- no tiene
-
---hijos de Gerencia de Recursos Humanos 61
--- no tiene
-
---hijos de Gerencia de Bienes y Suministros 62
--- no tiene
-
---hijos de Gerencia Administrativa 63
--- no tiene
-
---hijos de Gerencia de Infraestructura 64
--- no tiene
-
---hijos de Coordinaciones Regionales 65
--- no tiene
-
---hijos de Juzgado de Paz Civil 66
--- no tiene
-
---hijos de Juzgado de Paz Mixto 67
--- no tiene
