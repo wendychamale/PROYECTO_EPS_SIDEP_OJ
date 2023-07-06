@@ -107,12 +107,12 @@ export class GestionesComponent implements OnInit {
   }
 
   valProfile(){
-// esto despues hay que quitarlo 
 
-this.viewSecretaria=true;
+
+this.viewSecretaria=false;
 this.viewPresidencia=false;
 this.viewUcpas = false;
-this.viewNominas = false;
+this.viewNominas = true;
 this.viewCidej=false;
 this.viewCit=false;
 this.viewSecrePresi=false;
@@ -130,6 +130,7 @@ if(this.viewCidej || this.viewCit||this.viewNominas){
   this.viewSecrePresi=false;
   this.viewUcpas = false;
 }
+ // se debe de activar las banderas para cada area de acuerdo al id del perfil
     for(var i=0; i<this.session.PERFILES.length; i++){
      /*  if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
            this.viewNominas = true;

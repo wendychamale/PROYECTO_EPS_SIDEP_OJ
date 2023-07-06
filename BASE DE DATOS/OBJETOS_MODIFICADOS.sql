@@ -1096,10 +1096,14 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             then
             p_msj:='Error dependencia tiene plazas no puede ser regularizada';
             ELSE
-             SELECT CODIGO_DEPENDENCIA,codigo_presupuestario,nombre_dependencia, referencia,id_usuario_registro,nombre_documento,ip, id_gestion_dependencia
+             select CODIGO_DEPENDENCIA,codigo_presupuestario,nombre_dependencia, referencia,id_usuario_registro,nombre_documento,ip, id_gestion_dependencia
              INTO P_CODIGO_DEPENDENCIA,p_codigo_presupuestario1,p_nombre_dependencia,p_referencia, p_id_usuario_registro,p_nombre_archivo ,p_ip,p_id_gestion_dependencia
+              from(
+             select CODIGO_DEPENDENCIA,codigo_presupuestario,nombre_dependencia, referencia,id_usuario_registro,nombre_documento,ip, id_gestion_dependencia
              FROM SIDEP.TT_GEST_DEPENDENCIA
-             WHERE CODIGO_DEPENDENCIA=p_codigo_dependencia_r;
+             WHERE CODIGO_DEPENDENCIA=p_codigo_dependencia_r  
+             and id_estado_proceso=2 order by fecha_registro desc)
+             where rownum=1;
             
           /*  PKG_DEPENDENCIA.PROC_BAJA_TT_GEST_DEPENDENCIA (
             p_codigo_dependencia => P_CODIGO_DEPENDENCIA,
@@ -1852,7 +1856,7 @@ CREATE OR REPLACE PACKAGE BODY SIDEP.PKG_DEPENDENCIA AS
             P_ID_SALIDA,
             P_MSJ
         FROM
-            SIDEP.RH_DEPENDENCIA
+            RRHH.RH_DEPENDENCIA
         WHERE 
             DEPENDENCIA = P_DEPENDENCIA;    
     EXCEPTION

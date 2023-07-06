@@ -114,13 +114,12 @@ public class CreaDependenciaManager {
     Connection conn = c.conectar();
     conn.setAutoCommit(false);
     try {
-     // ttDependencia.RUTA = this.archivo.getRutaArchivo(ttDependencia);
+      ttDependencia.RUTA = this.archivo.getRutaArchivo(ttDependencia);
       salida = modSolicitudDependencia(ttDependencia, conn);
       if (salida.id > 0) {
         ttDependencia.ID_SOLICITUD = (new StringBuilder(String.valueOf(salida.id))).toString();
-       //Esto hay que regrearslo boolean cargaArchivo = this.archivo.guardarArchivo(ttDependencia).booleanValue();
-        boolean cargaArchivo=true;
-        if (cargaArchivo) {
+        boolean cargaArchivo = this.archivo.guardarArchivo(ttDependencia).booleanValue();
+         if (cargaArchivo) {
           salida.result = "OK";
           conn.commit();
         } else {

@@ -204,7 +204,7 @@ export class CreacionComponent implements OnInit {
   ];
   
   valProfile(){
-    // esto despues hay que quitarlo 
+
     this.viewSecretaria=false;
     this.viewPresidencia=false;
     this.viewUcpas = true;
@@ -225,6 +225,7 @@ export class CreacionComponent implements OnInit {
     this.viewSecrePresi=false;
     this.viewUcpas = false;
   }
+          // se debe de activar las banderas para cada area de acuerdo al id del perfil
         for(var i=0; i<this.session.PERFILES.length; i++){
         /*   if(this.constantes.SNP == this.session.PERFILES[i].ID_PERFIL){
                this.viewNominas = true;
